@@ -28,7 +28,7 @@ const Login = () => {
             color: "#fff"
           }
         })
-        localStorage.setItem("authToken", token)
+        localStorage.setItem("authToken"    ,token)
         // console.log("userssss:", user)
 
         localStorage.setItem("user", JSON.stringify(user))
