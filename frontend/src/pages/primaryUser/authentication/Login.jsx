@@ -29,7 +29,7 @@ const Login = () => {
           }
         })
         localStorage.setItem("authToken", token)
-        console.log("userssss:", user)
+        // console.log("userssss:", user)
 
         localStorage.setItem("user", JSON.stringify(user))
 
