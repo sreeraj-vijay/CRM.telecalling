@@ -1,41 +1,211 @@
-import React from "react"
-import { Link, NavLink } from "react-router-dom"
+import React, { useState } from "react"
+import { Link, NavLink, useNavigate } from "react-router-dom"
+import { FaSearch, FaTimes, FaChevronRight } from "react-icons/fa"
 
 export default function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [transactionMenuOpen, setTransactionMenuOpen] = useState(false)
+  const [masterMenuOpen, setMasterMenuOpen] = useState(false)
+  const [reportsMenuOpen, setReportsMenuOpen] = useState(false)
+  const [tasksMenuOpen, setTasksMenuOpen] = useState(false)
+  const [crmMenuOpen, setCrmMenuOpen] = useState(false)
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false)
+  const [inventoryMenuOpen, setInventoryMenuOpen] = useState(false)
+  const navigate = useNavigate()
+  const logout = () => {
+    // Clear the authentication token from local storage
+    localStorage.removeItem("authToken")
+
+    // Redirect to login page
+    navigate("/")
+  }
   const links = [
-    { to: "/", label: "Home" },
-    { to: "/services", label: "Services" },
-    { to: "/about", label: "About" },
-    { to: "/project", label: "Projects" },
-    { to: "/learn", label: "Learn" },
+    { to: "/admin/home", label: "Home" },
+    { to: "/admin/masters", label: "Masters" },
+    { to: "/admin/transactions", label: "Transactions" },
+    { to: "/admin/report", label: "Reports" },
+    { to: "/admin/task", label: "Task" }
+  ]
+
+  const masters = [
+    { to: "/admin/masters/company", label: "Company" },
+    { to: "/admin/masters/branch", label: "Branch" },
+    { to: "/admin/masters/customer", label: "Customer" },
+    { to: "/admin/masters/users-&-passwords", label: "Users & Passwords" },
+    { to: "/admin/masters/menuRights", label: "Menu Rights" },
+    { to: "/admin/masters/voucherMaster", label: "Voucher Master" },
+    { to: "/admin/masters/target", label: "Target" },
+    { to: "/admin/masters/product", label: "Product" },
+    { to: "/admin/masters/inventory", label: "Inventory", hasChildren: true },
+    { to: "/admin/masters/customerImport", label: "Customer Import" },
+    { to: "/admin/masters/partners", label: "Partners" },
+    { to: "/admin/masters/department", label: "Department" }
+  ]
+
+  const inventorys = [
+    { to: "/admin/masters/inventory/brandRegistration", label: "Brand" },
+    { to: "/admin/masters/inventory/categoryRegistration", label: "Category" },
+    { to: "/admin/masters/inventory/hsnlist", label: "HSN" }
+  ]
+  const transactions = [
+    { to: "/admin/transaction/lead", label: "Lead" },
+    {
+      to: "/admin/transaction/call-registration",
+      label: "Call Registration"
+    },
+    {
+      to: "/admin/transaction/leave-application",
+      label: "Leave Application"
+    }
+  ]
+  const tasks = [
+    { to: "/admin/tasks/signUp-custmer", label: "Sign Up Custmer" },
+    { to: "/admin/tasks/productMerge", label: "Product Merge" },
+    {
+      to: "/admin/tasks/productAllocation-Pending",
+      label: "Product Allocation Pending"
+    },
+    {
+      to: "/admin/tasks/leaveApproval-pending",
+      label: "Leave Approval Pending"
+    },
+    { to: "/admin/tasks/workAllocation", label: "Work Allocation" }
+  ]
+  const reports = [
+    { to: "/admin/reports/summary", label: "Summary" },
+    { to: "/admin/reports/expiry-register", label: "Expiry Register" },
+    {
+      to: "/admin/reports/expired-custmerCalls",
+      label: "Expired Customer Calls"
+    },
+    {
+      to: "/admin/reports/customer-callsSummary",
+      label: "Customer Calls Summary"
+    },
+    {
+      to: "/admin/reports/customer-contacts",
+      label: "Customer Contacts"
+    },
+    {
+      to: "/admin/reports/customer-actionsummary",
+      label: "Customer Action Summary"
+    },
+    { to: "/adminr/eports/account-search", label: "Account Search" },
+    { to: "/admin/reports/leave-summary", label: "Leave Summary" }
   ]
 
   return (
-    <header className="bg-white shadow-lg h-24 hidden md:flex">
-      <Link
-        to="/home"
-        className="border flex-shrink-0 flex items-center justify-center px-4 lg:px-6 xl:px-8"
+    <header className="sticky top-0 z-50 flex bg-white shadow-md h-24 items-center">
+      {/* Mobile menu button */}
+      <div className="md:hidden flex justify-between py-2 px-4">
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="hover:text-red-800 focus:outline-none"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M4 6h16M4 12h16m-7 6h7"
+            ></path>
+          </svg>
+        </button>
+      </div>
+
+      {/* Mobile menu */}
+      <div
+        className={`lg:hidden ${
+          mobileMenuOpen
+            ? "absolute top-0 left-0 z-50 bg-white shadow-md"
+            : "hidden"
+        }`}
       >
-        <img src="https://i.ibb.co/W6ZXdqN/2021-10-26-16h20-21.pnG" alt="" />
-      </Link>
-      <nav className="hidden md:flex flex-grow justify-center items-center gap-3  space-x-4">
-        {" "}
-        {links.map(link => (
+        <div>
+          <button
+            onClick={() => setMobileMenuOpen(false)}
+            className="absolute right-0 mt-2 mr-2 text-gray-600 hover:text-black"
+          >
+            <FaTimes className="h-3 font-extralight" />
+          </button>
+        </div>
+        <div className="block leading-10 text-blue-600 mt-5">
+          {links.map((link) => (
+            <div key={link.to}>
+              <Link to={link.to} className="block px-4 hover:bg-gray-300">
+                {link.label}
+              </Link>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Logo and links */}
+      <div className="flex items-center space-x-2 sm:px-12">
+        <svg
+          className="w-12 h-12 text-green-600"
+          viewBox="0 0 64 64"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="32"
+            cy="32"
+            r="30"
+            stroke="currentColor"
+            strokeWidth="4"
+            fill="none"
+          />
+          <path
+            d="M32 2 A30 30 0 0 1 32 62"
+            stroke="currentColor"
+            strokeWidth="4"
+            fill="none"
+          />
+          <text
+            x="50%"
+            y="50%"
+            textAnchor="middle"
+            fill="currentColor"
+            fontSize="18"
+            fontFamily="Arial, Helvetica, sans-serif"
+            dy=".3em"
+          >
+            CRM
+          </text>
+        </svg>
+        <span className="text-3xl font-bold text-green-600">CAMET</span>
+      </div>
+      <nav className="hidden md:flex items-center gap-3 space-x-4">
+        {links.map((link) => (
           <div
             key={link.to}
             className="relative mb-2"
             onMouseEnter={() => {
-              if (link.label === "SHOP BY BRAND") {
-                setBrandMenuOpen(true)
-              } else if (link.label === "LEARN") {
-                setLearnMenuOpen(true)
+              if (link.label === "Masters") {
+                setMasterMenuOpen(true)
+              } else if (link.label === "Transactions") {
+                setTransactionMenuOpen(true)
+              } else if (link.label === "Reports") {
+                setReportsMenuOpen(true)
+              } else if (link.label === "Task") {
+                setTasksMenuOpen(true)
               }
             }}
             onMouseLeave={() => {
-              if (link.label === "SHOP BY BRAND") {
-                setBrandMenuOpen(false)
-              } else if (link.label === "LEARN") {
-                setLearnMenuOpen(false)
+              if (link.label === "Masters") {
+                setMasterMenuOpen(false)
+              } else if (link.label === "Transactions") {
+                setTransactionMenuOpen(false)
+              } else if (link.label === "Reports") {
+                setReportsMenuOpen(false)
+              } else if (link.label === "Task") {
+                setTasksMenuOpen(false)
               }
             }}
           >
@@ -43,36 +213,92 @@ export default function Header() {
               to={link.to}
               className={({ isActive }) =>
                 isActive
-                  ? "text-primary text-lg leading-7 font-bold "
-                  : "text-textColor text-lg leading-7 hover:text-primary"
+                  ? "text-primary text-xl leading-7 font-bold"
+                  : "text-textColor text-xl leading-7 hover:text-primary"
               }
             >
               {link.label}
             </NavLink>
 
-            {link.label === "SHOP BY BRAND" && brandMenuOpen && (
-              <div className="absolute top-full left-0 mt-0 w-80 bg-white border border-gray-200 shadow-lg grid grid-cols-2 rounded-md ">
-                {brands.map(brand => (
-                  <Link
-                    key={brand.to}
-                    to={brand.to}
-                    className=" px-2 py-2 text-gray-600 text-sm hover:bg-gray-100"
+            {/* Masters dropdown */}
+            {link.label === "Masters" && masterMenuOpen && (
+              <div className="absolute top-full left-0 mt-0 w-48 bg-white border border-gray-200 grid grid-cols-1 shadow-lg rounded-md">
+                {masters.map((master) => (
+                  <div
+                    key={master.to}
+                    className="relative mb-2"
+                    onMouseEnter={() => {
+                      if (master.hasChildren) setInventoryMenuOpen(true)
+                    }}
+                    onMouseLeave={() => {
+                      if (master.hasChildren) setInventoryMenuOpen(false)
+                    }}
                   >
-                    {brand.label}
+                    <Link
+                      to={master.to}
+                      className="flex justify-between px-4 py-1 text-gray-600 text-sm hover:bg-gray-100"
+                    >
+                      {master.label}
+                      {master.hasChildren && <FaChevronRight />}
+                    </Link>
+
+                    {/* Inventory dropdown */}
+                    {master.hasChildren && inventoryMenuOpen && (
+                      <div
+                        className="absolute top-0 left-full w-48 bg-white border border-gray-200 shadow-lg rounded-md"
+                        onMouseEnter={() => setInventoryMenuOpen(true)}
+                        onMouseLeave={() => setInventoryMenuOpen(false)}
+                      >
+                        {inventorys.map((inventory) => (
+                          <Link
+                            key={inventory.to}
+                            to={inventory.to}
+                            className="block px-4 py-2 text-gray-600 text-sm hover:bg-gray-100"
+                          >
+                            {inventory.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+            {link.label === "Transactions" && transactionMenuOpen && (
+              <div className="absolute top-full left-0 mt-0 w-48 bg-white border border-gray-200 shadow-lg block rounded-md ">
+                {transactions.map((transaction) => (
+                  <Link
+                    key={transaction.to}
+                    to={transaction.to}
+                    className=" block  px-2 py-2 text-gray-600 text-sm hover:bg-gray-100"
+                  >
+                    {transaction.label}
                   </Link>
                 ))}
               </div>
             )}
-
-            {link.label === "LEARN" && learnMenuOpen && (
-              <div className="absolute top-full left-0 mt-0 w-48 bg-white border border-gray-200 shadow-lg rounded-md">
-                {learnItems.map(item => (
+            {link.label === "Reports" && reportsMenuOpen && (
+              <div className="absolute top-full left-0 mt-0 w-48 bg-white border border-gray-200 grid grid-cols-1 shadow-lg rounded-md">
+                {reports.map((report) => (
                   <Link
-                    key={item.to}
-                    to={item.to}
+                    key={report.to}
+                    to={report.to}
                     className=" px-4 py-2 text-gray-600 text-sm hover:bg-gray-100"
                   >
-                    {item.label}
+                    {report.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+            {link.label === "Task" && tasksMenuOpen && (
+              <div className="absolute top-full left-0 mt-0 w-48 bg-white border border-gray-200 grid grid-cols-1 shadow-lg rounded-md">
+                {tasks.map((task) => (
+                  <Link
+                    key={task.to}
+                    to={task.to}
+                    className=" px-4 py-2 text-gray-600 text-sm hover:bg-gray-100"
+                  >
+                    {task.label}
                   </Link>
                 ))}
               </div>
@@ -80,119 +306,62 @@ export default function Header() {
           </div>
         ))}
       </nav>
-      <nav className="hidden xl:contents">
-        <ul className="flex items-center mr-4 lg:mr-6 xl:mr-8">
-          <li className="p-1">
-            <a
-              href=""
-              className="inline-block rounded-full border p-2 hover:shadow-lg hover:border-opacity-0 duration-200 hover:-translate-y-0.5"
-            >
-              <svg
-                className="h-4"
-                aria-hidden="true"
-                focusable="false"
-                data-prefix="fab"
-                data-icon="twitter"
-                role="img"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 512 512"
-              >
-                <path
-                  fill="currentColor"
-                  d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"
-                ></path>
-              </svg>
-            </a>
-          </li>
-          <li className="p-1">
-            <a
-              href=""
-              className="inline-block rounded-full border p-2 hover:shadow-lg hover:border-opacity-0 duration-200 hover:-translate-y-0.5"
-            >
-              <svg
-                className="h-4"
-                aria-hidden="true"
-                focusable="false"
-                data-prefix="fab"
-                data-icon="facebook-f"
-                role="img"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 320 512"
-              >
-                <path
-                  fill="currentColor"
-                  d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"
-                ></path>
-              </svg>
-            </a>
-          </li>
-          <li className="p-1">
-            <a
-              href=""
-              className="inline-block rounded-full border p-2 hover:shadow-lg hover:border-opacity-0 duration-200 hover:-translate-y-0.5"
-            >
-              <svg
-                className="h-4"
-                aria-hidden="true"
-                focusable="false"
-                data-prefix="fab"
-                data-icon="linkedin-in"
-                role="img"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 448 512"
-              >
-                <path
-                  fill="currentColor"
-                  d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"
-                ></path>
-              </svg>
-            </a>
-          </li>
-          <li className="p-1">
-            <a
-              href=""
-              className="inline-block rounded-full border p-2 hover:shadow-lg hover:border-opacity-0 duration-200 hover:-translate-y-0.5"
-            >
-              <svg
-                className="h-4"
-                aria-hidden="true"
-                focusable="false"
-                data-prefix="fab"
-                data-icon="instagram"
-                role="img"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 448 512"
-              >
-                <path
-                  fill="currentColor"
-                  d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"
-                ></path>
-              </svg>
-            </a>
-          </li>
-        </ul>
-      </nav>
-      <div className="border flex items-center px-4 lg:px-6 xl:px-8">
-        <a href="" className="mr-4 lg:mr-6 xl:mr-8">
-          <svg
-            className="h-6 xl:h-8"
-            aria-hidden="true"
-            focusable="false"
-            data-prefix="far"
-            data-icon="search"
-            role="img"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 512 512"
+
+      <div className="flex flex-grow justify-center items-center">
+        <div className="relative">
+          <span
+            className="bg-blue-500 text-white mx-12 rounded-md shadow-md p-2 cursor-pointer"
+            onMouseEnter={() => setProfileMenuOpen(true)}
+            onMouseLeave={() => setProfileMenuOpen(false)}
           >
-            <path
-              fill="currentColor"
-              d="M508.5 468.9L387.1 347.5c-2.3-2.3-5.3-3.5-8.5-3.5h-13.2c31.5-36.5 50.6-84 50.6-136C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c52 0 99.5-19.1 136-50.6v13.2c0 3.2 1.3 6.2 3.5 8.5l121.4 121.4c4.7 4.7 12.3 4.7 17 0l22.6-22.6c4.7-4.7 4.7-12.3 0-17zM208 368c-88.4 0-160-71.6-160-160S119.6 48 208 48s160 71.6 160 160-71.6 160-160 160z"
-            ></path>
-          </svg>
-        </a>
-        <button className="bg-black hover:bg-gray-700 text-white font-bold px-4 xl:px-6 py-2 xl:py-3 rounded">
-          Contact Me
-        </button>
+            Profile
+          </span>
+          {profileMenuOpen && (
+            <div
+              onMouseEnter={() => setProfileMenuOpen(true)}
+              onMouseLeave={() => setProfileMenuOpen(false)}
+              className="absolute bg-white border rounded top-full mt-0 right-8 w-40 shadow-lg"
+            >
+              <Link
+                to="/admin/crm/crm"
+                onMouseEnter={() => setCrmMenuOpen(true)}
+                onMouseLeave={() => setCrmMenuOpen(false)}
+                className="block px-4 py-2 hover:bg-gray-200 cursor-pointer"
+              >
+                CRM
+              </Link>
+              {crmMenuOpen && (
+                <div
+                  onMouseEnter={() => setCrmMenuOpen(true)}
+                  onMouseLeave={() => setCrmMenuOpen(false)}
+                  className="absolute bg-white border rounded top-full mt-0 left-full w-40 shadow-lg"
+                >
+                  <Link
+                    to="/admin/crm/crm/activity"
+                    className="block px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                  >
+                    Activity
+                  </Link>
+                </div>
+              )}
+              <Link
+                to="/admin/profile"
+                className="block px-4 py-2 hover:bg-gray-200 cursor-pointer"
+              >
+                View Profile
+              </Link>
+              <button
+                onClick={logout}
+                className="block px-4 py-2 text-gray-600 text-sm hover:bg-gray-100 w-full text-left"
+              >
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
+        <span>
+          <FaSearch className="h-3 text-gray-500 ml-12 cursor-pointer" />
+        </span>
       </div>
     </header>
   )
