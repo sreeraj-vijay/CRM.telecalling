@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { Link, NavLink, useNavigate } from "react-router-dom"
 import { FaSearch, FaTimes, FaChevronRight } from "react-icons/fa"
 
-export default function Header() {
+export default function AdminHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [transactionMenuOpen, setTransactionMenuOpen] = useState(false)
   const [masterMenuOpen, setMasterMenuOpen] = useState(false)
@@ -15,6 +15,8 @@ export default function Header() {
   const logout = () => {
     // Clear the authentication token from local storage
     localStorage.removeItem("authToken")
+    localStorage.removeItem("user")
+    localStorage.removeItem("timer")
 
     // Redirect to login page
     navigate("/")

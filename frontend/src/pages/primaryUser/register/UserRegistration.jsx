@@ -8,12 +8,12 @@ function UserRegistration() {
   const handleSubmit = async (userData) => {
     try {
       const response = await api.post("/auth/userRegistration", userData, {
-        withCredentials: true,
+        withCredentials: true
       })
-      toast.success("Company created successfully:")
-      navigate("/admin/home")
+      toast.success("user created successfully:")
+      navigate("/admin/masters/users-&-passwords")
     } catch (error) {
-      console.error("Error creating company:", error)
+      console.error("Error creating user:", error)
     }
   }
   return (

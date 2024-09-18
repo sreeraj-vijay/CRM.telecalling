@@ -15,8 +15,7 @@ const CustomerSchema = new mongoose.Schema({
   selected: [],
   callregistration: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "CallRegistration",
-    required: true
+    ref: "CallRegistration"
   }
 })
 

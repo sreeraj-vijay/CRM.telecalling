@@ -1,5 +1,6 @@
 //import Footer from "../components/Footer/Footer"
-import Header from "../header/Header"
+import AdminHeader from "../header/AdminHeader.jsx"
+import StaffHeader from "../header/StaffHeader.jsx"
 
 import Mainrouter from "../router/Mainrouter.jsx"
 
@@ -9,10 +10,12 @@ const Layout = () => {
   let location = useLocation()
 
   let adminHeader = location.pathname.startsWith("/admin")
+  let staffHeader = location.pathname.startsWith("/staff")
 
   return (
     <>
-      {adminHeader ? <Header /> : ""}
+      {adminHeader ? <AdminHeader /> : ""}
+      {staffHeader ? <StaffHeader /> : ""}
       <main>
         <Mainrouter />
       </main>

@@ -66,7 +66,7 @@ const CustomerAdd = ({ process, handleCustomerData, handleEditedData }) => {
       setLicense(licensenumber)
     }
   })
-  console.log(license)
+
   const debouncedLicenseNo = useDebounce(tableObject.license_no, 500)
   useEffect(() => {
     // If there's a debounced license number, check its uniqueness
@@ -113,8 +113,6 @@ const CustomerAdd = ({ process, handleCustomerData, handleEditedData }) => {
 
     // checkLicenseNumber(debouncedLicenseNo)
   }, [debouncedLicenseNo])
-
-  
 
   useEffect(() => {
     if (productData) setProducts(productData) // Directly set products to productData
@@ -369,7 +367,6 @@ const CustomerAdd = ({ process, handleCustomerData, handleEditedData }) => {
   //   () => products?.find((product) => product._id === selectedProduct?.value),
   //   [productData?.products, selectedProduct]
   // )
-  
 
   const onSubmit = async (formData) => {
     try {
@@ -832,9 +829,9 @@ const CustomerAdd = ({ process, handleCustomerData, handleEditedData }) => {
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
                   placeholder="Enter a description..."
                 />
-                {errors.productDescription && (
+                {errors.amcDescription && (
                   <span className="mt-2 text-sm text-red-600">
-                    {errors.productDescription.message}
+                    {errors.amcDescription.message}
                   </span>
                 )}
               </div>

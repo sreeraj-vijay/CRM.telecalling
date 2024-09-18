@@ -60,7 +60,7 @@ const UseFetch = (url) => {
 
       try {
         const result = await fetchDataFromApi(url)
-        if (result.data && Array.isArray(result.data)) {
+        if (result.data) {
           setData(result.data) // Accessing the `data` key from the response
         } else {
           setError("Expected data to be an array")

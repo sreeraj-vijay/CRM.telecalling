@@ -18,8 +18,7 @@ import ProductList from "../../../pages/primaryUser/List/ProductList"
 
 import PendingCustomer from "../../../components/secondaryUser/PendingCustomer"
 import ProductEdit from "../../../pages/primaryUser/edit/ProductEdit"
-import UserListform from "../../../pages/primaryUser/List/UserListform"
-const mastersRoutes = [
+const staffmastersRoutes = [
   {
     path: "/admin/masters/company",
 
@@ -47,7 +46,7 @@ const mastersRoutes = [
   },
   { path: "/admin/maseters/customerEdit", component: CustomerEdit },
   {
-    path: "/admin/masters/userRegistration",
+    path: "/admin/masters/users&passwords",
     component: UserRegistration
   },
   {
@@ -79,7 +78,7 @@ const mastersRoutes = [
   },
   { path: "/admin/masters/productEdit", component: ProductEdit },
   { path: "/admin/masters/productRegistration", component: ProductMaster },
-  { path: "/admin/masters/users-&-passwords", component: UserListform },
+  { path: "/admin/masters/users-&-passwords", component: UserRegistration },
 
   { path: "/admin/masters/menurights", title: "Menu Rights" },
 
@@ -91,4 +90,4 @@ const mastersRoutes = [
   { path: "/admin/masters/deapartment", title: "Department" }
 ]
 
-export default mastersRoutes
+export default staffmastersRoutes

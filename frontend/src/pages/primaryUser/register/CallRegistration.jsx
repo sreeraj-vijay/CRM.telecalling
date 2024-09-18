@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useMemo } from "react"
-import { useForm } from "react-hook-form"
-import api from "../../../api/api"
+import { useLocation } from "react-router-dom"
 
+import { useForm } from "react-hook-form"
+import { formatDistanceToNow, parseISO } from "date-fns"
+import api from "../../../api/api"
+import { formatTime } from "../../../utils/timeUtils"
 import debounce from "lodash.debounce"
 import UseFetch from "../../../hooks/useFetch"
-
+import Timer from "../../../components/primaryUser/Timer"
 export default function CallRegistration() {
   const {
     register,
@@ -17,72 +20,136 @@ export default function CallRegistration() {
   } = useForm()
 
   const [customerData, setCustomerData] = useState([])
+  const [name, setName] = useState("")
+  const [editform, setEditformdata] = useState({})
   const [productDetails, setProductDetails] = useState([])
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(false)
   const [searching, setSearching] = useState(true)
   const [search, setSearch] = useState("")
   const [selectedCustomer, setSelectedCustomer] = useState(null)
-  const [time, setTime] = useState(0)
+  const [selectedProducts, setSelectedProducts] = useState([])
   const [isRunning, setIsRunning] = useState(false) // Start with the timer running
   const [startTime, setStartTime] = useState(Date.now())
   const [endTime, setEndTime] = useState(null)
   const [formData, setFormData] = useState(null)
-  const [callData, setCallData] = useState({
-    startTime: "",
-    endTime: "",
-    duration: "",
-    token: ""
-  })
+  const [callData, setCallData] = useState([])
   // const { data: userData, error: userError } = UseFetch("//getallProducts")
   //timer for page loading
-  const [tokenData, settokenData] = useState(null)
+  const [tokenData, setTokenData] = useState(null)
+  //  const { data: registeredCall, refreshHook } = selectedCustomer?._id
+  //   ? UseFetch(`/customer/getcallregister?customerid=${selectedCustomer._id}`)
+  //    : { data: null }
+
+  const { data: registeredCall, refreshHook } = UseFetch(
+    `/customer/getcallregister?customerid=${
+      selectedCustomer?._id || null
+    }&customer=${selectedCustomer?.customerName || null}`
+  )
+  const location = useLocation()
+  const { calldetails, token } = location.state || {}
+  console.log("det", calldetails)
+  console.log("tekkk", token)
+  useEffect(() => {
+    if (calldetails) {
+      console.log("calldetails", calldetails)
+      console.log("tokkkkd", token)
+      // Fetch the call details using the ID
+      fetchCallDetails(calldetails)
+        .then((callData) => {
+          console.log("calldata", callData)
+          console.log("tok", token)
+          const matchingRegistration =
+            callData.callDetails.callregistration.find(
+              (registration) => registration.timedata.token === token
+            )
+          console.log("match", matchingRegistration)
+
+          // If a matching registration is found, extract the product details
+          const productName = matchingRegistration
+            ? matchingRegistration.product.productName
+            : null
+          console.log("productname", productName)
+          console.log("cust", selectedCustomer)
+          const matchingProducts =
+            callData.callDetails.customerid.selected.filter(
+              (product) => product.product_name === productName
+            )
+          console.log("detailsprodut", productDetails)
+
+          setSelectedCustomer(callData.callDetails.customerid)
+          setName(callData.callDetails.customerid.customerName)
+
+          setProductDetails(matchingProducts)
+          // setProductDetails(customer.selected)
+          // Set form values with the fetched callData
+
+          const editData = {
+            incomingNumber: matchingRegistration.formdata.incomingNumber,
+            token: matchingRegistration.timedata.token,
+            description: matchingRegistration.formdata.description,
+            solution: matchingRegistration.formdata.solution,
+            status: matchingRegistration.formdata.status
+          }
+
+          reset(editData)
+          setIsRunning(true)
+
+          setStartTime(Date.now())
+          refreshHook()
+          // setEditformdata(editData)
+          // for (const [key, value] of Object.entries(editData)) {
+          //   console.log("hiii")
+          //   console.log("key,value", key, value)
+          //   setValue(key, value) // Set the form fields
+          // }
+        })
+        .catch((error) => {
+          console.error("Error fetching call details:", error)
+        })
+    }
+  }, [calldetails, setValue])
+
+  console.log("prod", productDetails)
+
+  const fetchCallDetails = async (callId) => {
+    console.log("callid", callId)
+    // Assuming you have an API to fetch the details
+    const response = await fetch(
+      `http://localhost:5000/api/customer/getcallregister/${callId}`
+    )
+
+    const data = await response.json()
+    console.log("dataaa", data)
+    return data
+  }
 
   useEffect(() => {
-    if (selectedCustomer) {
-      setIsRunning(true)
-      setStartTime(Date.now())
-    } else {
-      setIsRunning(false)
-      setTime(0) // Reset the timer when no customer is selected
+    if (registeredCall) {
+      setCallData(registeredCall.callregistration)
     }
-  }, [selectedCustomer])
-
+  }, [registeredCall])
   useEffect(() => {
-    let interval = null
-
-    if (isRunning) {
-      interval = setInterval(() => {
-        setTime(Math.floor((Date.now() - startTime) / 1000))
-      }, 1000)
+    // Set the default product if there's only one
+    if (productDetails.length === 1) {
+      setSelectedProducts(productDetails[0])
     }
+  }, [productDetails])
 
-    return () => clearInterval(interval)
-  }, [isRunning, startTime])
-
-  // useEffect(() => {
-  // //   if (callData.token && callData.startTime) {
-  // //     ;(async () => {
-  // //       const response = await api.post(
-  // //         `/customer/callRegistration?customerid=${selectedCustomer._id}`,
-  // //         { callData }, // You might need to include form data if necessary
-  // //         {
-  // //           withCredentials: true
-  // //         }
-  // //       )
-  // //       reset() // Reset form after submission
-  // //       // Handle response if needed
-  // //     })()
-  // //   }
-  // // }, [tokenData, callData])
-
-  const storedUser = localStorage.getItem("user")
-  const parsedUser = storedUser ? JSON.parse(storedUser) : {}
-  const userOptions = [
-    {
-      value: parsedUser._id,
-      label: parsedUser.name
+  const handleCheckboxChange = (e, product) => {
+    if (e.target.checked) {
+      setSelectedProducts(product)
+    } else if (selectedProducts.product_name === product.product_name) {
+      setSelectedProducts(null) // Deselect if it was previously selected
     }
-  ]
+  }
+  console.log("selected product", selectedProducts)
+
+  const calculateRemainingDays = (expiryDate) => {
+    if (!expiryDate) return "N/A"
+    const expiry = parseISO(expiryDate) // Parse the expiry date
+    const today = new Date() // Get current date
+    return formatDistanceToNow(expiry, { addSuffix: false }) // Calculate distance in human-readable format
+  }
 
   function generateUniqueNumericToken(length = 10) {
     const timestamp = Math.floor(Date.now() / 1000) // Current time in seconds
@@ -94,48 +161,96 @@ export default function CallRegistration() {
     return token
   }
 
-  // const uniqueToken = generateUniqueNumericToken()
-  // console.log(uniqueToken) // Example: '52879605'
+  const stopTimer = async (time) => {
+    const endTime = Date.now()
 
-  const formatTime = (totalSeconds) => {
-    const hours = Math.floor(totalSeconds / 3600)
-    const minutes = Math.floor((totalSeconds % 3600) / 60)
-    const seconds = totalSeconds % 60
-
-    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
-      2,
-      "0"
-    )}:${String(seconds).padStart(2, "0")}`
-  }
-
-  // const stopTimer = () => {
-  //   setIsRunning(false)
-  //   localStorage.setItem("timer", time) // Save timer value in local storage
-  // }
-  const stopTimer = async () => {
-    setIsRunning(false)
-    setEndTime(Date.now()) // Set the end time
     localStorage.setItem("timer", time)
-    const userid = local
-    // Save timer value in local storage
-    const uniqueToken = generateUniqueNumericToken()
 
-    const data = {
-      startTime: formatDateTime(new Date(startTime)),
-      endTime: formatDateTime(new Date(Date.now())),
-      duration: formatTime(time),
-      token: uniqueToken
+    // Save timer value in local storage
+    if (!token) {
+      const uniqueToken = generateUniqueNumericToken()
+      setTokenData(uniqueToken)
+      const timeData = {
+        startTime: formatDateTime(new Date(startTime)),
+        endTime: formatDateTime(new Date(endTime)),
+        duration: formatTime(time),
+        token: uniqueToken
+      }
+      const userData = localStorage.getItem("user")
+      const user = JSON.parse(userData)
+
+      const calldata = {
+        userName: user.name,
+        product: selectedProducts.product_id,
+        license: selectedProducts.license_no,
+        branchName: selectedProducts.branch_name,
+        timedata: timeData,
+        formdata: formData
+      }
+
+      const response = await api.post(
+        `/customer/callRegistration?customerid=${selectedCustomer._id}&customer=${selectedCustomer.customerName}`,
+        calldata,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json" // Ensure the correct content type
+          }
+        }
+      )
+      if (response.status === 200) {
+        setCallData(response.data.updatedCall.callregistration)
+        reset()
+      }
+    } else {
+      const timeData = {
+        startTime: formatDateTime(new Date(startTime)),
+        endTime: formatDateTime(new Date(endTime)),
+        duration: formatTime(time),
+        token: token
+      }
+      const userData = localStorage.getItem("user")
+      const user = JSON.parse(userData)
+
+      const calldata = {
+        userName: user.name,
+        product: selectedProducts.product_id,
+        license: selectedProducts.license_no,
+        branchName: selectedProducts.branch_name,
+        timedata: timeData,
+        formdata: formData
+      }
+
+      const response = await api.post(
+        `/customer/callRegistration?customerid=${selectedCustomer._id}&customer=${selectedCustomer.customerName}`,
+        calldata,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json" // Ensure the correct content type
+          }
+        }
+      )
+      if (response.status === 200) {
+        setCallData(response.data.updatedCall.callregistration)
+        reset()
+      }
     }
 
-    return data
+    //callregistration api
   }
 
   const formatDateTime = (date) => {
     const year = date.getFullYear()
+
     const month = date.toLocaleString("default", { month: "long" })
+
     const day = String(date.getDate()).padStart(2, "0")
+
     const hours = String(date.getHours()).padStart(2, "0")
+
     const minutes = String(date.getMinutes()).padStart(2, "0")
+
     const seconds = String(date.getSeconds()).padStart(2, "0")
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
@@ -157,7 +272,11 @@ export default function CallRegistration() {
 
       if (response.ok) {
         const result = await response.json()
-        setCustomerData(result.data) // Store the customer data directly
+
+        setCustomerData(result.data)
+        const userData = localStorage.getItem("user")
+        const user = JSON.parse(userData)
+        setUser(user)
       } else {
         const errorData = await response.json()
         console.error("Error fetching customer data:", errorData.message)
@@ -178,31 +297,41 @@ export default function CallRegistration() {
     }
   }
 
-  const handleRowClick = (customer) => {
+  const handleRowClick = (customer, selectedcustomer) => {
+    console.log("csut", customer)
+    console.log("select", customer.selected)
+    setCallData([])
     setSelectedCustomer(customer)
 
     setProductDetails(customer.selected)
     setSearching(true)
+    if (customer) {
+      setIsRunning(true)
+
+      setStartTime(Date.now())
+      refreshHook()
+    } else {
+      setIsRunning(false)
+      setTime(0) // Reset the timer when no customer is selected
+    }
 
     // Additional actions can be performed here (e.g., populate form fields)
   }
+
   const onSubmit = async (data) => {
-    const datas = await stopTimer()
-    const calldata = {
-      call: datas,
-      formdata: data
+    setIsRunning(false)
+    const userData = localStorage.getItem("user")
+    const user = JSON.parse(userData)
+    let updatedData = { ...data }
+
+    if (updatedData.status === "pending") {
+      updatedData.attendedBy = user.name
+      updatedData.completedBy = "" // Clear completedBy if status is pending
+    } else if (updatedData.status === "solved") {
+      updatedData.attendedBy = user.name
+      updatedData.completedBy = user.name // Set both attendedBy and completedBy if status is solved
     }
-    console.log("calldatain before:", calldata)
-    const response = await api.post(
-      `/customer/callRegistration?customerid=${selectedCustomer._id}&userid=${userid}`,
-      calldata, // You might need to include form data if necessary
-      {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json" // Ensure the correct content type
-        }
-      }
-    )
+    setFormData(updatedData)
   }
 
   return (
@@ -213,15 +342,15 @@ export default function CallRegistration() {
         <div className="w-2/4 ml-5">
           <div>
             <label
-              htmlFor="productName"
+              htmlFor="customerName"
               className="block text-sm font-medium text-gray-700"
             >
               Search Customer
             </label>
             <input
               type="text"
-              id="productName"
-              value={search}
+              id="customerName"
+              value={name}
               onChange={(e) => handleInputChange(e.target.value)}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
               placeholder="Enter name or license..."
@@ -339,101 +468,145 @@ export default function CallRegistration() {
                 </h3>
               </div>
 
-              <div className="m-5 w-lg max-h-40 overflow-x-auto overflow-y-auto">
+              <div className="m-5 w-lg max-h-30 overflow-x-auto overflow-y-auto">
                 <table className=" m-w-full divide-y divide-gray-200 shadow">
                   <thead className="sticky  top-0 z-30 bg-green-300">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        select
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Product Name
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Company Name
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Branch Name
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        License No
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        No.of Users
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Version
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Installed Date
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Amc startDate
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        License No
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Amc endDate
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Amc amount
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         License expiry
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Product Amount
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        License Remaing
                       </th>
 
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Amc startDate
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Amc endDate
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Amc Remaining
+                      </th>
+
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Tvu expiry
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Tvu amount
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Tvu Remaining
                       </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        No.of Users
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Version
+                      </th>
+
+                      {user.role === "Admin" && (
+                        <>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Company Name
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Branch Name
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Product Amount
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Tvu Amount
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Amc Amount
+                          </th>
+                        </>
+                      )}
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {productDetails?.map((product, index) => (
                       <tr key={index}>
-                        <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                          <input
+                            className="form-checkbox h-4 w-4 text-blue-600 hover:bg-blue-200 focus:ring-blue-500 cursor-pointer"
+                            checked={
+                              selectedProducts.product_name ===
+                              product.product_name
+                            }
+                            type="checkbox"
+                            onChange={(e) => handleCheckboxChange(e, product)}
+                          />
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                           {product?.product_name}
                         </td>
-                        <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {product?.company_name}
-                        </td>
-
-                        <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {product?.branch_name}
-                        </td>
-                        <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {product?.license_no}
-                        </td>
-                        <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {product?.no_of_users}
-                        </td>
-                        <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {product?.version}
-                        </td>
-                        <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                           {product?.customer_addDate}
                         </td>
-                        <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {product?.amc_startDate}
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                          {product?.license_no}
                         </td>
-                        <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {product?.amc_endDate}
-                        </td>
-                        <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {product?.amc_amount}
-                        </td>
-                        <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                           {product?.license_expiryDate}
                         </td>
-                        <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {product?.product_amount}
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                          {calculateRemainingDays(product?.license_expiryDate)}
                         </td>
-                        <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                          {product?.amc_startDate}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                          {product?.amc_endDate}
+                        </td>
+
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                          {calculateRemainingDays(product?.amc_endDate)}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                           {product?.tvu_expiryDate}
                         </td>
-                        <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {product?.tvu_amount}
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                          {calculateRemainingDays(product?.tvu_expiryDate)}
                         </td>
+
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                          {product?.no_of_users}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                          {product?.version}
+                        </td>
+                        {user.role === "Admin" && (
+                          <>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                              {product?.company_name}
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                              {product?.branch_name}
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                              {product?.product_amount}
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                              {product?.amc_amount}
+                            </td>
+
+                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                              {product?.tvu_amount}
+                            </td>
+                          </>
+                        )}
                       </tr>
                     ))}
                   </tbody>
@@ -441,9 +614,11 @@ export default function CallRegistration() {
               </div>
               <div className=" container mt-12 ">
                 <div className="flex container justify-center items-center">
-                  <p className="text-2xl font-extrabold text-gray-900 mb-4 bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text">
-                    Call Duration: {formatTime(time)}
-                  </p>
+                  <Timer
+                    isRunning={isRunning}
+                    startTime={startTime}
+                    onStop={stopTimer}
+                  />
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)}>
@@ -545,25 +720,6 @@ export default function CallRegistration() {
                   <div className="flex justify-between m-5">
                     <div className="w-1/3">
                       <label
-                        htmlFor="completedby"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Completed By
-                      </label>
-                      <select
-                        {...register("completedby")}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm outline-none"
-                      >
-                        <option value="">-- Select user--</option>
-                        {userOptions.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="w-1/3">
-                      <label
                         htmlFor="status"
                         className="block text-sm font-medium text-gray-700"
                       >
@@ -591,79 +747,134 @@ export default function CallRegistration() {
                   )}
                 </form>
 
-                <div className="mt-12 overflow-y-auto w-full max-h-50">
-                  <table className=" w-full divide-y divide-gray-200 rounded-lg ">
-                    <thead className="sticky top-0 z-30 bg-blue-200 shadow">
+                <div className="mt-12 overflow-y-auto w-full max-h-60">
+                  <table className=" w-full divide-y divide-gray-200 rounded-xl ">
+                    <thead className="sticky top-0 z-30  bg-[#48CFCB] shadow">
                       <tr className="">
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-5 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
                           Token No
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-5 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
                           Start Time
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-5 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
                           End Time
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-5 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
                           Duration
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-5 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
+                          Incoming Number
+                        </th>
+                        {/* <th className="px-6 py-5 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
                           Description
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-5 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
                           Solution
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        </th> */}
+                        <th className="px-6 py-5 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
                           AttendedBy
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-5 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
                           CompletedBy
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-5 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
                           Status
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {/* {callData?.map((call, index) => (
-                        <tr
-                          key={index}
-                          className={`border ${
-                            call.status === "solved"
-                              ? "bg-green-400"
-                              : "bg-red-400"
-                          }`}
-                        >
-                          <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                            {tokenData.token}
-                          </td>
-                          <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                            {call?.startTime}
-                          </td>
+                    <tbody className="  divide-gray-500">
+                      {callData?.map((call, index) => {
+                        const today = new Date().toISOString().split("T")[0]
+                        const startTimeRaw = call?.timedata?.startTime
+                        const callDate = startTimeRaw
+                          ? new Date(startTimeRaw.split(" ")[0])
+                              .toISOString()
+                              .split("T")[0]
+                          : null
+                        return (
+                          <>
+                            <tr
+                              key={index}
+                              className={`border border-b-0 ${
+                                call.formdata.status === "solved"
+                                  ? "bg-[#88D66C]"
+                                  : call?.formdata?.status === "pending"
+                                  ? callDate === today
+                                    ? "bg-orange-300"
+                                    : "bg-red-400"
+                                  : "bg-red-400"
+                              }`}
+                            >
+                              <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">
+                                {call.timedata.token}
+                              </td>
+                              <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">
+                                {call.timedata.startTime}
+                              </td>
 
-                          <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                            {call?.endTime}
-                          </td>
-                          <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                            {call?.duration}
-                          </td>
-                          <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                            {call?.startTime}
-                          </td>
-                          <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                            {call?.endTime}
-                          </td>
-                          <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                            {call?.startTime}
-                          </td>
-                          <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                            {call?.duration}
-                          </td>
-                          <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                            {call?.endTime}
-                          </td>
-                        </tr>
-                      ))} */}
+                              <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">
+                                {call.timedata.endTime}
+                              </td>
+                              <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">
+                                {call.timedata.duration}
+                              </td>
+                              <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">
+                                {call.formdata.incomingNumber}
+                              </td>
+                              {/* <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">
+                              {call.formdata.description}
+                            </td>
+                            <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">
+                              {call.formdata.solution}
+                            </td> */}
+                              <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">
+                                {call.formdata.attendedBy}
+                              </td>
+                              <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">
+                                {call.formdata.completedBy}
+                              </td>
+                              <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-700">
+                                {call.formdata.status}
+                              </td>
+                            </tr>
+                            <tr
+                              className={`text-center border-t-0 border-gray-500 ${
+                                call?.formdata?.status === "solved"
+                                  ? "bg-[#88D66C]"
+                                  : call?.formdata?.status === "pending"
+                                  ? callDate === today
+                                    ? "bg-orange-300"
+                                    : "bg-red-400"
+                                  : "bg-red-400"
+                              }`}
+                              style={{ height: "5px" }}
+                            >
+                              <td
+                                colSpan="3"
+                                className="py-1 px-8 text-sm text-black text-left"
+                              >
+                                <strong>Description:</strong>{" "}
+                                {call?.formdata?.description || "N/A"}
+                              </td>
+                              <td
+                                colSpan="3"
+                                className="py-1 px-12 text-sm text-black text-left"
+                              >
+                                <strong>Solution:</strong>{" "}
+                                {call?.formdata?.solution || "N/A"}
+                              </td>
+                              <td
+                                colSpan="2"
+                                className="py-1 px-12 text-sm text-black text-left"
+                              >
+                                <strong>Incoming Number:</strong>{" "}
+                                {call?.formdata?.incomingNumber || "N/A"}
+                              </td>
+                            </tr>
+                          </>
+                        )
+                      })}
                     </tbody>
                   </table>
                 </div>

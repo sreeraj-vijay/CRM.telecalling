@@ -26,6 +26,7 @@ const PendingCustomer = () => {
       setFilteredCustomer(pendingCustomerData)
     }
   }, [pendingCustomerData])
+  console.log("filt", filteredCustomer)
 
   //   const handleSearch = useCallback(
   //     _.debounce((query) => {
@@ -130,7 +131,7 @@ const PendingCustomer = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredCustomer?.length > 0 ? (
+              {filteredCustomer?.length > 0 && filteredCustomer.filter((customer) => customer.selected.length === 0).length > 0 ? (
                 filteredCustomer
                   .filter((customer) => customer.selected.length === 0) // Filter customers with an empty selected array
                   .map((customer) => (

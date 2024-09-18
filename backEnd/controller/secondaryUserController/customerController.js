@@ -1,6 +1,7 @@
 import Customer from "../../model/secondaryUser/customerSchema.js"
 import License from "../../model/secondaryUser/licenseSchema.js"
-import CallRegistration from "../../model/secondaryUser/CallRegistration.js"
+import CallRegistration from "../../model/secondaryUser/CallRegistrationSchema.js"
+import mongoose from "mongoose"
 
 export const CustomerRegister = async (req, res) => {
   const { customerData, tabledata = {} } = req.body
@@ -20,6 +21,7 @@ export const CustomerRegister = async (req, res) => {
 
   // Check if user already exists
   const customerExists = await Customer.findOne({ customerName })
+  console.log("ecit", customerExists)
 
   if (customerExists) {
     return res.status(400).json({ message: "Customer already registered" })
@@ -39,7 +41,9 @@ export const CustomerRegister = async (req, res) => {
       landline,
       selected: tabledata
     })
+    console.log("customerrrrrrr", customer)
     const customerData = await customer.save()
+    console.log("customerdataaaaaaaaaaa", customerData)
 
     if (tabledata) {
       for (const item of customerData.selected) {
@@ -95,157 +99,6 @@ export const GetCustomer = async (req, res) => {
   }
 }
 
-// export const GetCustomer = async (req, res) => {
-//   const { search } = req.query
-//   console.log("search parameter in controller:", search)
-
-//   try {
-//     // Search by license number, customer name, or mobile number
-//     let searchCriteria = {}
-
-//     if (!isNaN(search)) {
-//       // Search by license number
-//       searchCriteria = { "selected.license_no": search }
-//     } else {
-//       // Search by customer name
-//       searchCriteria = { customerName: new RegExp(search, "i") }
-//     }
-
-//     let customers = await Customer.find(searchCriteria)
-//     console.log("Initial search result:", customers)
-
-//     if (customers.length === 0) {
-//       // If no results, try searching by mobile number
-//       searchCriteria = { mobile: search }
-//       console.log("serachhhhhhhhhaadada:", searchCriteria)
-//       customers = await Customer.find(searchCriteria)
-//       console.log("Search by mobile result:", customers)
-//     }
-
-//     if (customers.length > 0) {
-//       res.json({ message: "Customer(s) found", data: customers })
-//     } else {
-//       res.json({ message: "No customer found" })
-//     }
-//   } catch (error) {
-//     console.error("Error fetching customer data:", error.message)
-//     res
-//       .status(500)
-//       .json({ message: "An error occurred while fetching customer data." })
-//   }
-// }
-
-// export const GetCustomer = async (req, res) => {
-//   const { search } = req.query
-
-//   const searchCriteria = {}
-
-//   // Check if search is a number (could be license number)
-//   if (!isNaN(search)) {
-//     searchCriteria["selected.license_no"] = search
-//   } else {
-//     // Assume search is a customer name otherwise
-//     searchCriteria.customerName = new RegExp(search, "i") // 'i' for case insensitive
-//   }
-
-//   try {
-//     // First search by license number or customer name
-
-//     let customers = await Customer.find(searchCriteria)
-//     console.log("cust:", customers)
-
-//     // If no results are found, search by mobile number
-//     if (customers.length == 0) {
-//       console.log("serarhhh", search)
-//       searchCriteria = { mobile: search }
-//       customers = await Customer.find(searchCriteria)
-//     }
-
-//     // Send response once with all found customers (if any)
-//     if (customers.length > 0) {
-//       res.json({ message: "Customer(s) found", data: customers })
-//     } else {
-//       res.json({ message: "No customer found" })
-//     }
-//   } catch (error) {
-//     console.error("Error fetching customer data:", error.message)
-//     res
-//       .status(500)
-//       .json({ message: "An error occurred while fetching customer data." })
-//   }
-// }
-
-// export const checkLicenseNumber = async (req, res) => {
-//   const { license_no } = req.body
-//   console.log("license check at:", license_no)
-
-//   try {
-//     // Query the Customer collection to find if the license number exists in any product
-//     const customer = await Customer.findOne({
-//       "selected.license_no": license_no
-//     })
-
-//     // Return a response indicating whether the license number exists
-//     if (customer) {
-//       return res.status(200).json({ exists: true })
-//     } else {
-//       return res.status(200).json({ exists: false })
-//     }
-//   } catch (error) {
-//     console.error("Error checking license number:", error)
-//     return res.status(500).json({ message: "Internal Server Error" })
-//   }
-// }
-
-// export const GetCustomer = async (req, res) => {
-//   try {
-//     const customers = await Customer.find()
-//     console.log("customers list:", customers)
-
-//     if (!customers && customers.length < 0) {
-//       res.status(404).json({ messsge: "customers not found" })
-//     }
-//     res.status(200).json({ message: "customers found", data: customers })
-//   } catch (err) {
-//     console.error(err.message)
-//     res.status(500).send("Server Error")
-//   }
-// }
-// export const GetCustomer = async (req, res) => {
-//   const { search } = req.query
-
-//   console.log("search parameter in controller:", search)
-
-//   const searchCriteria = {}
-
-//   if (!isNaN(search)) {
-//     searchCriteria["selected.license_no"] = search
-//   }
-//   // Assume search is a customer name otherwise
-//   else {
-//     searchCriteria.customerName = new RegExp(search, "i") // 'i' for case insensitive
-//   }
-
-//   try {
-//     const customers = await Customer.find(searchCriteria)
-//     console.log("cust:", customers)
-//     if (customers.length == 0) {
-//       searchCriteria.mobile = search
-//       const customer = await Customer.find(searchCriteria)
-//       console.log("customedddddddd:", customer)
-//       if (customer) {
-//         res.json({ message: "customer found ", data: customer })
-//       }
-//     }
-//     res.json({ message: "customer found", data: customers })
-//   } catch (error) {
-//     console.error("Error fetching customer data:", error.message)
-//     res
-//       .status(500)
-//       .json({ message: "An error occurred while fetching customer data." })
-//   }
-// }
-
 export const GetLicense = async (req, res) => {
   try {
     const licensenumber = await License.find()
@@ -261,25 +114,144 @@ export const GetLicense = async (req, res) => {
   }
 }
 export const customerCallRegistration = async (req, res) => {
-  const calldata = req.body
-  const { customerid } = req.query
-  console.log("new customerid:", customerid)
-  console.log("body:", req.body)
-  console.log("new calldata", calldata)
-  // console.log("tokendata", tokenData)
-  // console.log("calldata", callData)
-  // console.log("data", formData)
-  // console.log("idddddd:", customerid)
-  const user = await CallRegistration.findById(customerid)
-  console.log("new user,", user)
-  if (!user) {
-    const users = new CallRegistration({
-      callregistration: calldata,
-
-      customerid
-    })
-    console.log("usersssss", user)
-  }
   try {
-  } catch (error) {}
+    const { customerid, customer } = req.query // Get customerid from query
+    const calldata = req.body // Assuming calldata is sent in the body
+    console.log("calldata", calldata)
+
+    // Convert customerid to ObjectId
+    const customerId = new mongoose.Types.ObjectId(customerid)
+    console.log("howww")
+    if (!mongoose.Types.ObjectId.isValid(customerId)) {
+      throw new Error("Invalid ObjectId format")
+    }
+
+    // Find if there is already a call registration for this customer
+    const user = await CallRegistration.findOne({ customerid: customerId })
+
+    if (user) {
+      const token = calldata.formdata.token
+      if (token) {
+        const callToUpdate = user.callregistration.find(
+          (call) => call.timedata.token === token
+        )
+        if (callToUpdate) {
+          // Update the fields with the new data
+          callToUpdate.timedata = calldata.timedata
+          callToUpdate.formdata = calldata.formdata
+          callToUpdate.userName = calldata.userName
+          callToUpdate.product = calldata.product
+          callToUpdate.license = calldata.license
+          callToUpdate.branchName = calldata.branchName
+
+          // Save the updated document
+          const updatedCall = await user.save()
+          return res.status(200).json({
+            status: true,
+            message: "New call added successfully",
+            updatedCall
+          })
+          // Return or log the updated call if needed
+        }
+      }
+
+      // If a document is found, update it by pushing new call data to callregistration array
+      else user.callregistration.push(calldata)
+
+      // Save the updated document
+      const updatedCall = await user.save()
+
+      return res.status(200).json({
+        status: true,
+        message: "New call added successfully",
+        updatedCall
+      })
+    } else {
+      // If no document is found, create a new one with the given call data
+      const newCall = new CallRegistration({
+        customerid: customerId,
+        customerName: customer,
+        callregistration: [calldata] // Wrap calldata in an array
+      })
+
+      // Save the new document
+      const updatedCall = await newCall.save()
+
+      return res.status(200).json({
+        status: true,
+        message: "Call registered successfully",
+        updatedCall
+      })
+    }
+  } catch (error) {
+    console.error("Error saving or updating call registration:", error)
+    return res.status(500).json({
+      status: false,
+      message: "Error saving or updating call registration"
+    })
+  }
+}
+
+export const GetCallRegister = async (req, res) => {
+  try {
+    const { customerid, customer } = req.query
+    const { callId } = req.params
+
+    if (customerid !== "null" && customerid) {
+      const customerId = new mongoose.Types.ObjectId(customerid)
+      const registeredCall = await CallRegistration.findOne({
+        customerid: customerId
+      })
+
+      if (registeredCall) {
+        res
+          .status(200)
+          .json({ message: "registered call found", data: registeredCall })
+      }
+    } else if (callId) {
+      console.log("callid", callId)
+      const callDetails = await CallRegistration.findById(callId)
+        .populate("customerid")
+        .populate({
+          path: "callregistration.product", // Populate the product field inside callregistration array
+          model: "Product"
+        })
+      console.log("custojmer found", callDetails)
+
+      if (!callDetails) {
+        return res.status(404).json({ message: "Call not found" })
+      }
+
+      // Send the call details as a response
+      res
+        .status(200)
+        .json({ message: "calls with respect customer found", callDetails })
+    } else {
+      return res
+        .status(200)
+        .json({ message: "this customer doesnt make calls" })
+    }
+  } catch (error) {
+    console.log(error.message)
+    res.status(500).json({ message: "internal server error" })
+  }
+}
+export const GetallCalls = async (req, res) => {
+  try {
+    const allcalls = await CallRegistration.find()
+      .populate({
+        path: "callregistration.product", // Populate the product field inside callregistration array
+        select: "productName" // Optionally select fields from the Product schema you need
+      })
+      .exec()
+
+    if (allcalls.length > 0) {
+      res.status(200).json({ message: "calls found", data: allcalls })
+    } else {
+      res.status(400).json({ message: "no calls" })
+    }
+  } catch (error) {
+    console.log("error:", error.message)
+    res.status(500).json({ message: "server error" })
+  }
 }

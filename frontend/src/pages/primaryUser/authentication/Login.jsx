@@ -28,8 +28,7 @@ const Login = () => {
             color: "#fff"
           }
         })
-        localStorage.setItem("authToken", ...token)
-        // console.log("userssss:", user)
+        localStorage.setItem("authToken", token)
 
         localStorage.setItem("user", JSON.stringify(user))
 
@@ -125,8 +124,12 @@ const Login = () => {
               className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="">Select a role</option>
-              <option value="Staff">Staff</option>
               <option value="Admin">Admin</option>
+              <option value="Staff">Staff</option>
+              <option value="Seniormanager">Senior Manager</option>
+              <option value="Assistantmanager">Assistant Manager</option>
+              <option value="Hr">HR</option>
+              <option value="Teamleader">Team Leader</option>
             </select>
             {errors.role && (
               <p className="mt-2 text-sm text-red-600">{errors.role.message}</p>
