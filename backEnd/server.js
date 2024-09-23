@@ -21,15 +21,16 @@ const PORT = process.env.PORT || 7000
 
 // MongoDB connection getting from config/db.js
 connectDB()
-
-// const corsOptions = {
-//   // origin: ['http://localhost:5173', 'https://erp.camet.in'],
-//   // origin:'https://erp.camet.in',
-//   origin: true,
-//   credentials: true
-// }
-
 const app = express()
+const corsOptions = {
+  // origin: ['http://localhost:5173', 'https://erp.camet.in'],
+  // origin:'https://erp.camet.in',
+  origin: true,
+  credentials: true
+}
+app.use(cors(corsOptions))
+
+
 
 // Define __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url)
@@ -51,13 +52,13 @@ app.use(
     parameterLimit: 50000
   })
 )
-// app.use(cors(corsOptions))
-app.use(
-  cors({
-    origin: "http://localhost:5173", // Replace with your frontend URL
-    credentials: true
-  })
-)
+
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173", // Replace with your frontend URL
+//     credentials: true
+//   })
+// )
 app.use(cookieParser())
 
 // Routes
