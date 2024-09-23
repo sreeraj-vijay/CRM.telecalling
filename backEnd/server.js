@@ -30,8 +30,6 @@ const corsOptions = {
 }
 app.use(cors(corsOptions))
 
-
-
 // Define __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -95,9 +93,9 @@ if (process.env.NODE_ENV === "production") {
   //  const parentDir = path.join(__dirname ,'..');
   const parentDir = path.join(__dirname, "..")
   console.log(parentDir)
-  app.use(express.static(path.join(parentDir, "/frontend/dist")))
+  app.use(express.static(path.join(parentDir, "/frontEnd/dist")))
   app.get("*", (req, res) =>
-    res.sendFile(path.resolve(parentDir, "frontend", "dist", "index.html"))
+    res.sendFile(path.resolve(parentDir, "frontEnd", "dist", "index.html"))
   )
 } else {
   app.get("/", (req, res) => {
