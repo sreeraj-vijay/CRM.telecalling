@@ -87,6 +87,19 @@ app.use((err, req, res, next) => {
   res.status(500).send("Something broke!")
 })
 
+if(process.env.NODE_ENV==="production"){
+  console.log(process.env.NODE_ENV);
+  console.log("hai")
+  const __dirname=path.resolve()
+  //  const parentDir = path.join(__dirname ,'..'); 
+  const parentDir = path.join(__dirname ,'..'); 
+  console.log(parentDir)
+  app.use(express.static(path.join(parentDir,'/frontEnd/dist')))
+  app.get('*',(req,res)=>res.sendFile(path.resolve(parentDir,'frontEnd','dist','index.html')))
+}else{
+app.get('/',(req,res)=>{
+    res.send("Server is Ready")
+})}
 app.listen(PORT, () => {
   console.log(`Server started at http://localhost:${PORT}`)
 })
