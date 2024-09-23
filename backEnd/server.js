@@ -30,8 +30,6 @@ const corsOptions = {
 }
 app.use(cors(corsOptions))
 
-
-
 // Define __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
