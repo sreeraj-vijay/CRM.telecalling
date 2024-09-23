@@ -68,7 +68,8 @@ export default function StaffHeader() {
       to: "/staff/tasks/leaveApproval-pending",
       label: "Leave Approval Pending"
     },
-    { to: "/staff/tasks/workAllocation", label: "Work Allocation" }
+    { to: "/staff/tasks/workAllocation", label: "Work Allocation" },
+    { to: "/staff/tasks/location", label: "Location" }
   ]
   const reports = [
     { to: "/staff/reports/summary", label: "Summary" },

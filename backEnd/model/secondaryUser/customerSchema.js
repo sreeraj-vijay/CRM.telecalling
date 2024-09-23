@@ -12,6 +12,10 @@ const CustomerSchema = new mongoose.Schema({
   mobile: { type: String, required: true },
   landline: String,
   isActive: { type: Boolean, required: true, default: true },
+  contactPerson:{
+    type:String
+  },
+  parter:{type:String},
   selected: [],
   callregistration: {
     type: mongoose.Schema.Types.ObjectId,

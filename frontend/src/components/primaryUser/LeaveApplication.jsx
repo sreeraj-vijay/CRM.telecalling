@@ -278,17 +278,18 @@ function LeaveApplication() {
         {`
 
 .verified-event {
-  background-color: green !important; /* Green for verified */
+  background: linear-gradient(to right, #34d399, #16a34a) !important; /* Green for verified */
   color: white;
-  width: 100%;
-  height: 100%;
+  // width: 100%;
+  // height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  border:none;
 }
 
 .unverified-event {
-  background-color: red !important; /* Red for unverified */
+  background: linear-gradient(to right, #ff4d4d, #ff0000)!important; /* Red for unverified */
   color: white !important;
   // width: %;
   // height: %;

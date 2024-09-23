@@ -71,7 +71,8 @@ export default function AdminHeader() {
       to: "/admin/tasks/leaveApproval-pending",
       label: "Leave Approval Pending"
     },
-    { to: "/admin/tasks/workAllocation", label: "Work Allocation" }
+    { to: "/admin/tasks/workAllocation", label: "Work Allocation" },
+    { to: "/admin/tasks/excelconverter", label: "Excel Converter" }
   ]
   const reports = [
     { to: "/admin/reports/summary", label: "Summary" },

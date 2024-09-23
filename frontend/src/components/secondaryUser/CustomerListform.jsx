@@ -94,10 +94,10 @@ const CustomerListform = ({ customerlist }) => {
                   Product Name
                 </th>
                 <th className="py-2 px-4 border-b border-gray-300 text-left">
-                  Address1
+                  License
                 </th>
                 <th className="py-2 px-4 border-b border-gray-300 text-left">
-                  Address2
+                  Address1
                 </th>
 
                 <th className="py-2 px-4 border-b border-gray-300 text-left">
@@ -109,9 +109,7 @@ const CustomerListform = ({ customerlist }) => {
                 <th className="py-2 px-4 border-b border-gray-300 text-left">
                   Mobile
                 </th>
-                <th className="py-2 px-4 border-b border-gray-300 text-left">
-                  Telephone
-                </th>
+
                 <th className="py-2 px-4 border-b border-gray-300 text-left">
                   Email
                 </th>
@@ -140,11 +138,13 @@ const CustomerListform = ({ customerlist }) => {
                         {item?.product_name}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
+                        {item?.license_no}
+                      </td>
+
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                         {customer?.address1}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
-                        {customer?.address2}
-                      </td>
+
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                         {customer?.city}
                       </td>
@@ -154,9 +154,7 @@ const CustomerListform = ({ customerlist }) => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                         {customer?.mobile}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
-                        {customer?.landlineno}
-                      </td>
+
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                         {customer?.email}
                       </td>
@@ -167,7 +165,7 @@ const CustomerListform = ({ customerlist }) => {
                         <CiEdit
                           onClick={() =>
                             navigate("/admin/masters/customerEdit", {
-                              state: { customer: customer._id }
+                              state: { customer: customer, selected: item }
                             })
                           }
                         />

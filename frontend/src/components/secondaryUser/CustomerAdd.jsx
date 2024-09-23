@@ -5,7 +5,13 @@ import UseFetch from "../../hooks/useFetch"
 import useDebounce from "../../hooks/useDebounce"
 import { toast } from "react-toastify"
 import { FaEdit, FaTrash } from "react-icons/fa"
-const CustomerAdd = ({ process, handleCustomerData, handleEditedData }) => {
+const CustomerAdd = ({
+  process,
+  handleCustomerData,
+  handleEditedData,
+  customer,
+  selected
+}) => {
   const {
     register,
     handleSubmit,
@@ -50,7 +56,8 @@ const CustomerAdd = ({ process, handleCustomerData, handleEditedData }) => {
     product_description: "",
     tvu_expiryDate: "",
     tvu_amount: "",
-    tvu_description: ""
+    tvu_description: "",
+    isActive: ""
   })
   //now created
   const [isChecking, setIsChecking] = useState(false)
@@ -68,6 +75,7 @@ const CustomerAdd = ({ process, handleCustomerData, handleEditedData }) => {
   })
 
   const debouncedLicenseNo = useDebounce(tableObject.license_no, 500)
+
   useEffect(() => {
     // If there's a debounced license number, check its uniqueness
     if (debouncedLicenseNo) {
@@ -211,6 +219,31 @@ const CustomerAdd = ({ process, handleCustomerData, handleEditedData }) => {
       )
     }
   }, [productError])
+  const softwareTrades = [
+    "Agriculture",
+    "Business Services",
+    "Computer Hardware & Software",
+    "Electronics & Electrical Supplies",
+    "FMCG-Fast Moving Consumable Goods",
+    "Garment,Fashion & Apparel",
+    "Health & Beauty",
+    "Industrial Supplies",
+    "Jewelry & Gemstones",
+    "Mobile & Accessories",
+    "Pharmaceutical & Chemicals",
+    "Textiles & Chemicals",
+    "Textiles & Fabrics",
+    "Others",
+    "Restaurant",
+    "Food And Beverage",
+    "Accounts & Chartered Account",
+    "Stationery",
+    "Printing & Publishing",
+
+    "Pipes",
+    "Tubes & Fittings"
+    // Add more trades as needed
+  ]
 
   const handleDelete = (id) => {
     const filtereddData = tableData.filter((product, index) => {
@@ -361,13 +394,6 @@ const CustomerAdd = ({ process, handleCustomerData, handleEditedData }) => {
     }))
   }, [filteredBranches])
 
-  // const com = (apanyOptions = useMemo(() => {}))
-
-  // const selectedProductData = useMemo(
-  //   () => products?.find((product) => product._id === selectedProduct?.value),
-  //   [productData?.products, selectedProduct]
-  // )
-
   const onSubmit = async (formData) => {
     try {
       if (!licenseAvailable) {
@@ -515,6 +541,26 @@ const CustomerAdd = ({ process, handleCustomerData, handleEditedData }) => {
             </div>
 
             <div>
+              <label
+                htmlFor="contactPerson"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Contact Person
+              </label>
+              <input
+                type="text"
+                {...register("contactPerson")}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
+                placeholder="Contactperson"
+              />
+              {errors.contactPerson && (
+                <span className="mt-2 text-sm text-red-600">
+                  {errors.contactPerson.message}
+                </span>
+              )}
+            </div>
+
+            <div>
               <label className="block text-sm font-medium text-gray-700">
                 Email
               </label>
@@ -643,6 +689,33 @@ const CustomerAdd = ({ process, handleCustomerData, handleEditedData }) => {
                   <span className="mt-2 text-sm text-red-600">
                     {errors.licensenumber.message}
                   </span>
+                )}
+              </div>
+              <div>
+                <label htmlFor="softwareTrade">Software Trade</label>
+                <select
+                  id="softwareTrade"
+                  {...register("softwareTrade", { required: true })}
+                  onChange={
+                    (e) =>
+                      setTableObject({
+                        ...tableObject,
+                        softwareTrade: e.target.value
+                      }) // Update state on change
+                  }
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
+                >
+                  <option value="">Select Software Trade</option>
+                  {softwareTrades.map((trade, index) => (
+                    <option key={index} value={trade}>
+                      {trade}
+                    </option>
+                  ))}
+                </select>
+                {errors.softwareTrade && (
+                  <p className="text-red-500">
+                    Please select a software trade.
+                  </p>
                 )}
               </div>
               <div>
@@ -975,7 +1048,7 @@ const CustomerAdd = ({ process, handleCustomerData, handleEditedData }) => {
               </div>
               <div>
                 <label
-                  id="tvuamountDescription"
+                  htmlFor="tvuamountDescription"
                   className="block text-sm font-medium text-gray-700"
                 >
                   Tvu Description
@@ -1005,6 +1078,35 @@ const CustomerAdd = ({ process, handleCustomerData, handleEditedData }) => {
                   </span>
                 )}
               </div>
+              <div>
+                <label
+                  htmlFor="isActive"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Status
+                </label>
+                <select
+                  id="isActive"
+                  {...register("isActive", { required: true })}
+                  onChange={
+                    (e) =>
+                      setTableObject({
+                        ...tableObject,
+                        isActive: e.target.value
+                      }) // Update state on change
+                  }
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
+                >
+                  <option value="">Select Status</option>
+                  <option value="true">Active</option>
+                  <option value="false">Inactive</option>
+                </select>
+                {errors.isActive && (
+                  <p className="text-red-500">
+                    Please select a status for the customer.
+                  </p>
+                )}
+              </div>
             </div>
             {selectedBranch && (
               <div>
@@ -1017,27 +1119,7 @@ const CustomerAdd = ({ process, handleCustomerData, handleEditedData }) => {
                     {editState ? "UPDATE" : "ADD"}
                   </button>
                 </div>
-                <div className="mt-2">
-                  <label>
-                    <input
-                      type="radio"
-                      value="true"
-                      {...register("isActive", { required: true })}
-                    />
-                    Active
-                  </label>
-                  <label>
-                    <input
-                      type="radio"
-                      value="false"
-                      {...register("isActive", { required: true })}
-                    />
-                    Inactive
-                  </label>
-                  {errors.isActive && (
-                    <p>Please select a status for the customer.</p>
-                  )}
-                </div>
+
                 <div className="mt-6 w-lg overflow-x-auto">
                   <h3 className="text-lg font-medium text-gray-900">
                     Product Details List

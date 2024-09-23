@@ -16,7 +16,8 @@ export const CustomerRegister = async (req, res) => {
     pincode,
     email,
     mobile,
-    landline
+    landline,
+    isActive
   } = customerData
 
   // Check if user already exists
@@ -39,6 +40,7 @@ export const CustomerRegister = async (req, res) => {
       email,
       mobile,
       landline,
+      isActive,
       selected: tabledata
     })
     console.log("customerrrrrrr", customer)

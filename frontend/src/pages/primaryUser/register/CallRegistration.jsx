@@ -571,9 +571,9 @@ export default function CallRegistration() {
                           {product?.amc_endDate}
                         </td>
 
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                        {/* <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                           {calculateRemainingDays(product?.amc_endDate)}
-                        </td>
+                        </td> */}
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                           {product?.tvu_expiryDate}
                         </td>

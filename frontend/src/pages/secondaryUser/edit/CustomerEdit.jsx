@@ -7,7 +7,10 @@ import { toast } from "react-toastify"
 function CustomerEdit() {
   const navigate = useNavigate()
   const location = useLocation()
-  const customerId = location.state?.customer
+  const customer = location.state?.customer
+  const selected = location.state?.selected
+  console.log("selected", selected)
+  console.log("customer", customer)
   const handleSubmit = async (customerData) => {
     try {
       const response = await api.post(
@@ -26,7 +29,12 @@ function CustomerEdit() {
   }
   return (
     <div>
-      <CustomerAdd process="edit" handleCustomerData={handleSubmit} />
+      <CustomerAdd
+        process="edit"
+        handleEditedData={handleSubmit}
+        customer={customer}
+        selected={selected}
+      />
     </div>
   )
 }

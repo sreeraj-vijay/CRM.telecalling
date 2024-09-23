@@ -11,6 +11,7 @@ import transactionsRoutes from "./CrmRoutes/childRoutes/transactionsRoutes.js"
 import ProductList from "../components/common/ProductList.jsx"
 import stafftransactionsRoutes from "./staffRoutes/stafftransactionRoutes.js"
 import CallregistrationList from "../pages/secondaryUser/List/CallregistrationList.jsx"
+import stafftasksRoutes from "./staffRoutes/stafftaskRoutes.js"
 
 const Mainrouter = () => {
   const allRoutes = [
@@ -18,7 +19,8 @@ const Mainrouter = () => {
     ...reportsRoutes,
     ...tasksRoutes,
     ...transactionsRoutes,
-    ...stafftransactionsRoutes
+    ...stafftransactionsRoutes,
+    ...stafftasksRoutes
   ]
   return (
     <div>
@@ -26,7 +28,7 @@ const Mainrouter = () => {
         <Route path="/" element={<Login />} />
         <Route path="/admin/productlist" element={<ProductList />} />
         <Route path="/admin/home" element={<CallregistrationList />} />
-        <Route path="/staff/home" element={<CallregistrationList/>}/>
+        <Route path="/staff/home" element={<CallregistrationList />} />
         {allRoutes.map((route, index) => {
           const { path, component: Component, title } = route
           return (

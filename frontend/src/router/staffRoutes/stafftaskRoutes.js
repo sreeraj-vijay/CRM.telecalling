@@ -1,3 +1,5 @@
+import SiteVisit from "../../pages/common/SiteVisit"
+
 const stafftasksRoutes = [
   { path: "/staff/tasks/signup-customer", title: "SignUp Customer" },
   { path: "/staff/tasks/productMerge", title: "Product Merge" },
@@ -10,7 +12,8 @@ const stafftasksRoutes = [
     path: "/staff/tasks/leaveApproval-pending",
     title: "Leave Approval Pending"
   },
-  { path: "/staff/tasks/workAllocation", title: "Work Allocation" }
+  { path: "/staff/tasks/workAllocation", title: "Work Allo{cation" },
+  { path: "/staff/tasks/location", component: SiteVisit}
 ]
 
 export default stafftasksRoutes

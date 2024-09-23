@@ -8,6 +8,7 @@ import companyRoutes from "./routes/primaryUserRoutes/companyRoutes.js"
 import branchRoutes from "./routes/primaryUserRoutes/branchRoutes.js"
 import inventoryRoutes from "./routes/primaryUserRoutes/inventoryRoutes.js"
 import authRoutes from "./routes/authRoutes.js"
+import excelRoutes from "./routes/primaryUserRoutes/excelRoutes.js"
 import secondaryUserRoutes from "./routes/secondaryUserRoutes/secondaryUserRoutes.js"
 import productRoutes from "./routes/primaryUserRoutes/productRoutes.js"
 import path from "path"
@@ -61,7 +62,7 @@ app.use(cookieParser())
 
 // Routes
 app.use("/api/auth", authRoutes)
-
+app.use("/api/excel", excelRoutes)
 app.use("/api/company", companyRoutes)
 app.use("/api/branch", branchRoutes)
 app.use("/api/inventory", inventoryRoutes)
