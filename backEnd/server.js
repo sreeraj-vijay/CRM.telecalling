@@ -93,9 +93,9 @@ if (process.env.NODE_ENV === "production") {
   //  const parentDir = path.join(__dirname ,'..');
   const parentDir = path.join(__dirname, "..")
   console.log(parentDir)
-  app.use(express.static(path.join(parentDir, "/frontEnd/dist")))
+  app.use(express.static(path.join(parentDir, "/frontend/dist")))
   app.get("*", (req, res) =>
-    res.sendFile(path.resolve(parentDir, "frontEnd", "dist", "index.html"))
+    res.sendFile(path.resolve(parentDir, "frontend", "dist", "index.html"))
   )
 } else {
   app.get("/", (req, res) => {
