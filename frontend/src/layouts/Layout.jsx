@@ -1,16 +1,23 @@
 //import Footer from "../components/Footer/Footer"
-import Header from "../header/Header"
+import AdminHeader from "../header/AdminHeader.jsx"
+import StaffHeader from "../header/StaffHeader.jsx"
 
-import Routers from "../router/Router"
-//import { useLocation } from "react-router-dom"
+import Mainrouter from "../router/Mainrouter.jsx"
+
+import { useLocation } from "react-router-dom"
 
 const Layout = () => {
+  let location = useLocation()
+
+  let adminHeader = location.pathname.startsWith("/admin")
+  let staffHeader = location.pathname.startsWith("/staff")
+
   return (
     <>
-      <Header />
-
+      {adminHeader ? <AdminHeader /> : ""}
+      {staffHeader ? <StaffHeader /> : ""}
       <main>
-        <Routers />
+        <Mainrouter />
       </main>
       {/* <Footer /> */}
     </>
