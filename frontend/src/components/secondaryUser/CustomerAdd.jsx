@@ -19,6 +19,7 @@ const CustomerAdd = ({
     setError,
     clearErrors,
     setValue,
+    watch,
     formState: { errors }
   } = useForm()
 
@@ -38,25 +39,26 @@ const CustomerAdd = ({
   const [products, setProducts] = useState([])
   const [tableObject, setTableObject] = useState({
     company_id: "",
-    company_name: "",
+    companyName: "",
     branch_id: "",
-    branch_name: "",
+    branchName: "",
     product_id: "",
-    product_name: "",
-    license_no: "",
-    no_of_users: "",
+    productName: "",
+    licensenumber: "",
+    noofusers: "",
     version: "",
-    customer_addDate: "",
-    amc_startDate: "",
-    amc_endDate: "",
-    amc_amount: "",
-    amc_description: "",
-    license_expiryDate: "",
-    product_amount: "",
-    product_description: "",
-    tvu_expiryDate: "",
-    tvu_amount: "",
-    tvu_description: "",
+    customerAddDate: "",
+    amcstartDate: "",
+    amcendDate: "",
+
+    amcAmount: "",
+    amcDescription: "",
+    licenseExpiryDate: "",
+    productAmount: "",
+    productamountDescription: "",
+    tvuexpiryDate: "",
+    tvuAmount: "",
+    tvuamountDescription: "",
     isActive: ""
   })
   //now created
@@ -67,15 +69,50 @@ const CustomerAdd = ({
   const { data: licensenumber, error: licensenumberError } = UseFetch(
     "/customer/getLicensenumber"
   )
+  useEffect(() => {
+    if (productData) setProducts(productData) // Directly set products to productData
+  }, [productData])
+  const productOptions = useMemo(() => {
+    return products?.map((product) => ({
+      value: product._id,
+      label: product.productName
+    }))
+  }, [products])
   // Debounce license number input
   useEffect(() => {
     if (licensenumber) {
       setLicense(licensenumber)
     }
   })
+  console.log("selected", selected)
+  console.log("customer", customer)
 
   const debouncedLicenseNo = useDebounce(tableObject.license_no, 500)
-
+  useEffect(() => {
+    // Assuming you want to set the values for the first selected product
+    // const selectedProduct = customer.selected[0];
+    const keyvalue = []
+    const value = []
+    if (selected) {
+      Object.keys(selected).forEach((key) => {
+        console.log("sel", selected["amcstartDate"])
+        console.log("type", typeof selected.amcstartDate)
+        setValue("amcstartDate", new Date(selected["amcstartDate"]))
+        // if (key === "amcstartDate") {
+        //   keyvalue.push(key)
+        //   value.push(selected[key])
+        // }
+      })
+    }
+    if (customer) {
+      Object.keys(customer).forEach((key) => {
+        console.log("key")
+        setValue(key, customer[key])
+      })
+    }
+    console.log("key", keyvalue)
+    console.log("value", value)
+  }, [customer, selected, setValue])
   useEffect(() => {
     // If there's a debounced license number, check its uniqueness
     if (debouncedLicenseNo) {
@@ -122,9 +159,17 @@ const CustomerAdd = ({
     // checkLicenseNumber(debouncedLicenseNo)
   }, [debouncedLicenseNo])
 
-  useEffect(() => {
-    if (productData) setProducts(productData) // Directly set products to productData
-  }, [productData])
+  const productSelected = watch("productName")
+  const companySelected = watch("companyName")
+  const branchSelected = watch("branchName")
+  // const brandSelected = watch("brandName")
+  const licenseSelected = watch("licensenumber")
+  const softwaretradeSelected = watch("softwareTrade")
+  const noofuserSelected = watch("noofusers")
+  const customerAddDateSelected = watch("customerAddDate")
+  const amcstartDateSelected = watch("amcstartDate")
+  const amcendDateSelected = watch("amcendDate")
+  const amcAmountSelected = watch("amcAmount")
 
   const handleTableData = () => {
     if (!licenseAvailable) {
@@ -140,46 +185,46 @@ const CustomerAdd = ({
     } else if (tableObject.product_id.trim() === "") {
       toast.error("please select a product")
       return
-    } else if (tableObject.license_no.trim() === "") {
+    } else if (tableObject.licensenumber.trim() === "") {
       toast.error("please add a license number")
       return
-    } else if (tableObject.no_of_users.trim() === "") {
+    } else if (tableObject.noofusers.trim() === "") {
       toast.error("please add users")
       return
     } else if (tableObject.version.trim() === "") {
       toast.error("please add version")
       return
-    } else if (tableObject.customer_addDate.trim() === "") {
+    } else if (tableObject.customerAddDate.trim() === "") {
       toast.error("please choose a date")
       return
-    } else if (tableObject.amc_startDate.trim() === "") {
+    } else if (tableObject.amcstartDate.trim() === "") {
       toast.error("please add amc start date")
       return
-    } else if (tableObject.amc_amount.trim() === "") {
+    } else if (tableObject.amcendDate.trim() === "") {
       toast.error("please select amc end date")
       return
-    } else if (tableObject.amc_amount.trim() === "") {
+    } else if (tableObject.amcAmount.trim() === "") {
       toast.error("please fill amc amount")
       return
-    } else if (tableObject.amc_description.trim() === "") {
+    } else if (tableObject.amcDescription.trim() === "") {
       toast.error("please add amc description")
       return
-    } else if (tableObject.license_expiryDate.trim() === "") {
+    } else if (tableObject.licenseExpiryDate.trim() === "") {
       toast.error("please add license expiryDate")
       return
-    } else if (tableObject.product_amount.trim() === "") {
+    } else if (tableObject.productAmount.trim() === "") {
       toast.error("please add product amount")
       return
-    } else if (tableObject.product_description.trim() === "") {
+    } else if (tableObject.productamountDescription.trim() === "") {
       toast.error("please add product description")
       return
-    } else if (tableObject.tvu_expiryDate.trim() === "") {
+    } else if (tableObject.tvuexpiryDate.trim() === "") {
       toast.error("please add tvu expiryDate")
       return
-    } else if (tableObject.tvu_amount.trim() === "") {
+    } else if (tableObject.tvuAmount.trim() === "") {
       toast.error("please add tvu amount")
       return
-    } else if (tableObject.tvu_description.trim() === "") {
+    } else if (tableObject.tvuamountDescription.trim() === "") {
       toast.error("please add tvu description")
       return
     }
@@ -219,6 +264,7 @@ const CustomerAdd = ({
       )
     }
   }, [productError])
+
   const softwareTrades = [
     "Agriculture",
     "Business Services",
@@ -335,12 +381,6 @@ const CustomerAdd = ({
     setSelectedBranch(true)
   }
 
-  const productOptions = useMemo(() => {
-    return products?.map((product) => ({
-      value: product._id,
-      label: product.productName
-    }))
-  }, [products])
   //now created
   const filteredCompanies = useMemo(() => {
     const product = products.find((product) => product._id === selectedProduct)
@@ -615,6 +655,7 @@ const CustomerAdd = ({
               )}
             </div>
           </div>
+
           <div>
             <h1 className="text-2xl font-semibold mb-6">Product Details</h1>
             <div className="  grid grid-cols-1 sm:grid-cols-4 gap-6 m-5">
@@ -679,7 +720,7 @@ const CustomerAdd = ({
                     (e) =>
                       setTableObject({
                         ...tableObject,
-                        license_no: e.target.value
+                        licensenumber: e.target.value
                       }) // Update state on change
                   }
                   className="mt-0 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
@@ -727,18 +768,18 @@ const CustomerAdd = ({
                 </label>
                 <input
                   type="number"
-                  {...register("noofuser")}
+                  {...register("noofusers")}
                   onChange={
                     (e) =>
                       setTableObject({
                         ...tableObject,
-                        no_of_users: e.target.value
+                        noofusers: e.target.value
                       }) // Update state on change
                   }
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
                   placeholder="No of users.."
                 />
-                {errors.noofuser && (
+                {errors.noofusers && (
                   <span className="mt-2 text-sm text-red-600">
                     {errors.noofuser.message}
                   </span>
@@ -787,7 +828,7 @@ const CustomerAdd = ({
                     (e) =>
                       setTableObject({
                         ...tableObject,
-                        customer_addDate: e.target.value
+                        customerAddDate: e.target.value
                       }) // Update state on change
                   }
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
@@ -813,7 +854,7 @@ const CustomerAdd = ({
                     (e) =>
                       setTableObject({
                         ...tableObject,
-                        amc_startDate: e.target.value
+                        amcstartDate: e.target.value
                       }) // Update state on change
                   }
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
@@ -835,13 +876,22 @@ const CustomerAdd = ({
                   id="amcendDate"
                   type="date"
                   {...register("amcendDate")}
-                  onChange={
-                    (e) =>
-                      setTableObject({
-                        ...tableObject,
-                        amc_endDate: e.target.value
-                      }) // Update state on change
-                  }
+                  // onChange={
+                  //   (e) =>
+                  //     const value=e.target.value
+                  //     setTableObject({
+                  //       ...tableObject,
+                  //       amc_endDate: e.target.value
+                  //     })) // Update state on change
+                  // }
+                  onChange={(e) => {
+                    const value = e.target.value
+                    setValue("amcendDate", value) // Update the form state
+                    setTableObject((prev) => ({
+                      ...prev,
+                      amcendDate: value // Update local state if needed
+                    }))
+                  }}
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
                 />
                 {errors.amcendDate && (
@@ -864,7 +914,7 @@ const CustomerAdd = ({
                     (e) =>
                       setTableObject({
                         ...tableObject,
-                        amc_amount: e.target.value
+                        amcAmount: e.target.value
                       }) // Update state on change
                   }
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
@@ -896,7 +946,7 @@ const CustomerAdd = ({
                     (e) =>
                       setTableObject({
                         ...tableObject,
-                        amc_description: e.target.value
+                        amcDescription: e.target.value
                       }) // Update state on change
                   }
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
@@ -923,7 +973,7 @@ const CustomerAdd = ({
                     (e) =>
                       setTableObject({
                         ...tableObject,
-                        license_expiryDate: e.target.value
+                        licenseExpiryDate: e.target.value
                       }) // Update state on change
                   }
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
@@ -949,7 +999,7 @@ const CustomerAdd = ({
                     (e) =>
                       setTableObject({
                         ...tableObject,
-                        product_amount: e.target.value
+                        productAmount: e.target.value
                       }) // Update state on change
                   }
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
@@ -981,7 +1031,7 @@ const CustomerAdd = ({
                     (e) =>
                       setTableObject({
                         ...tableObject,
-                        product_description: e.target.value
+                        productamountDescription: e.target.value
                       }) // Update state on change
                   }
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
@@ -1008,7 +1058,7 @@ const CustomerAdd = ({
                     (e) =>
                       setTableObject({
                         ...tableObject,
-                        tvu_expiryDate: e.target.value
+                        tvuexpiryDate: e.target.value
                       }) // Update state on change
                   }
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
@@ -1034,7 +1084,7 @@ const CustomerAdd = ({
                     (e) =>
                       setTableObject({
                         ...tableObject,
-                        tvu_amount: e.target.value
+                        tvuAmount: e.target.value
                       }) // Update state on change
                   }
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
@@ -1066,7 +1116,7 @@ const CustomerAdd = ({
                     (e) =>
                       setTableObject({
                         ...tableObject,
-                        tvu_description: e.target.value
+                        tvuamountDescription: e.target.value
                       }) // Update state on change
                   }
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"

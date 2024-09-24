@@ -81,7 +81,7 @@ const ExcelUploader = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/excel/uploadExcel",
+        "http://localhost:9000/api/excel/uploadExcel",
         {
           method: "POST",
           body: formData
