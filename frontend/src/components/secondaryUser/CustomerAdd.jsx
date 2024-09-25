@@ -50,7 +50,6 @@ const CustomerAdd = ({
     customerAddDate: "",
     amcstartDate: "",
     amcendDate: "",
-
     amcAmount: "",
     amcDescription: "",
     licenseExpiryDate: "",
@@ -84,6 +83,7 @@ const CustomerAdd = ({
       setLicense(licensenumber)
     }
   })
+  console.log("tableo", tableObject)
   console.log("selected", selected)
   console.log("customer", customer)
 
@@ -159,6 +159,7 @@ const CustomerAdd = ({
     // checkLicenseNumber(debouncedLicenseNo)
   }, [debouncedLicenseNo])
 
+  console.log("typeof dte", tableObject.amcstartDate)
   const productSelected = watch("productName")
   const companySelected = watch("companyName")
   const branchSelected = watch("branchName")
@@ -251,7 +252,7 @@ const CustomerAdd = ({
 
       setTableData((prev) => [...prev, tableObject])
 
-      setlicenseExist((prev) => [...prev, tableObject.license_no])
+      setlicenseExist((prev) => [...prev, tableObject.licensenumber])
     }
 
     // reset()
@@ -346,7 +347,7 @@ const CustomerAdd = ({
     setTableObject((prev) => ({
       ...prev,
       product_id: productId,
-      product_name: productName
+      productName: productName
     }))
 
     setSelectedProduct(productId)
@@ -361,7 +362,7 @@ const CustomerAdd = ({
     setTableObject((prev) => ({
       ...prev,
       company_id: companyId,
-      company_name: companyName
+      companyName: companyName
     }))
     setValue("company", selectedOption?.value || "")
     setSelectedCompany(selectedOption.value)
@@ -375,7 +376,7 @@ const CustomerAdd = ({
     setTableObject((prev) => ({
       ...prev,
       branch_id: branchId,
-      branch_name: branchName
+      branchName: branchName
     }))
     setValue("branch", selectedOption?.value || "")
     setSelectedBranch(true)
@@ -397,7 +398,7 @@ const CustomerAdd = ({
         })
         .map((item) => ({
           _id: item.company_id,
-          name: item.company_name
+          name: item.companyName
         }))
       return uniqueCompanies
     }
@@ -421,7 +422,7 @@ const CustomerAdd = ({
         .filter((item) => item.company_id === selectedCompany)
         .map((item) => ({
           _id: item.branch_id,
-          name: item.branch_name
+          name: item.branchName
         }))
     }
     return []
@@ -855,7 +856,9 @@ const CustomerAdd = ({
                       setTableObject({
                         ...tableObject,
                         amcstartDate: e.target.value
-                      }) // Update state on change
+                      })
+
+                    // Update state on change
                   }
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
                 />
@@ -886,7 +889,7 @@ const CustomerAdd = ({
                   // }
                   onChange={(e) => {
                     const value = e.target.value
-                    setValue("amcendDate", value) // Update the form state
+                    // setValue("amcendDate", value) // Update the form state
                     setTableObject((prev) => ({
                       ...prev,
                       amcendDate: value // Update local state if needed
@@ -1232,47 +1235,47 @@ const CustomerAdd = ({
                       {tableData?.map((product, index) => (
                         <tr key={index}>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {product?.product_name}
+                            {product?.productName}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {product?.company_name}
+                            {product?.companyName}
                           </td>
 
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {product?.branch_name}
+                            {product?.branchName}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {product?.license_no}
+                            {product?.licensenumber}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {product?.no_of_users}
+                            {product?.noofusers}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {product?.version}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {product?.customer_addDate}
+                            {product?.customerAddDate}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {product?.amc_startDate}
+                            {product?.amcstartDate}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {product?.amc_endDate}
+                            {product?.amcendDate}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {product?.amc_amount}
+                            {product?.amcAmount}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {product?.license_expiryDate}
+                            {product?.licenseExpiryDate}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {product?.product_amount}
+                            {product?.productAmount}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {product?.tvu_expiryDate}
+                            {product?.tvuexpiryDate}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {product?.tvu_amount}
+                            {product?.tvuAmount}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             {" "}

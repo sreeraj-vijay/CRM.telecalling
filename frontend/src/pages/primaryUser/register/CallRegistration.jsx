@@ -47,34 +47,33 @@ export default function CallRegistration() {
   )
   const location = useLocation()
   const { calldetails, token } = location.state || {}
-  console.log("det", calldetails)
-  console.log("tekkk", token)
+  
   useEffect(() => {
     if (calldetails) {
-      console.log("calldetails", calldetails)
-      console.log("tokkkkd", token)
+      console.log("editcalls")
+      const userData = localStorage.getItem("user")
+      const user = JSON.parse(userData)
+      setUser(user)
       // Fetch the call details using the ID
       fetchCallDetails(calldetails)
         .then((callData) => {
-          console.log("calldata", callData)
-          console.log("tok", token)
+          
           const matchingRegistration =
             callData.callDetails.callregistration.find(
               (registration) => registration.timedata.token === token
             )
-          console.log("match", matchingRegistration)
+      
 
           // If a matching registration is found, extract the product details
           const productName = matchingRegistration
             ? matchingRegistration.product.productName
             : null
-          console.log("productname", productName)
-          console.log("cust", selectedCustomer)
+          
           const matchingProducts =
             callData.callDetails.customerid.selected.filter(
-              (product) => product.product_name === productName
+              (product) => product.productName === productName
             )
-          console.log("detailsprodut", productDetails)
+          
 
           setSelectedCustomer(callData.callDetails.customerid)
           setName(callData.callDetails.customerid.customerName)
@@ -109,17 +108,17 @@ export default function CallRegistration() {
     }
   }, [calldetails, setValue])
 
-  console.log("prod", productDetails)
+  
 
   const fetchCallDetails = async (callId) => {
     console.log("callid", callId)
     // Assuming you have an API to fetch the details
     const response = await fetch(
-      `http://localhost:5000/api/customer/getcallregister/${callId}`
+      `http://localhost:9000/api/customer/getcallregister/${callId}`
     )
 
     const data = await response.json()
-    console.log("dataaa", data)
+    
     return data
   }
 
@@ -138,11 +137,11 @@ export default function CallRegistration() {
   const handleCheckboxChange = (e, product) => {
     if (e.target.checked) {
       setSelectedProducts(product)
-    } else if (selectedProducts.product_name === product.product_name) {
+    } else if (selectedProducts.productName === product.productName) {
       setSelectedProducts(null) // Deselect if it was previously selected
     }
   }
-  console.log("selected product", selectedProducts)
+
 
   const calculateRemainingDays = (expiryDate) => {
     if (!expiryDate) return "N/A"
@@ -182,8 +181,8 @@ export default function CallRegistration() {
       const calldata = {
         userName: user.name,
         product: selectedProducts.product_id,
-        license: selectedProducts.license_no,
-        branchName: selectedProducts.branch_name,
+        license: selectedProducts.licensenumber,
+        branchName: selectedProducts.branchName,
         timedata: timeData,
         formdata: formData
       }
@@ -215,8 +214,8 @@ export default function CallRegistration() {
       const calldata = {
         userName: user.name,
         product: selectedProducts.product_id,
-        license: selectedProducts.license_no,
-        branchName: selectedProducts.branch_name,
+        license: selectedProducts.licensenumber,
+        branchName: selectedProducts.branchName,
         timedata: timeData,
         formdata: formData
       }
@@ -257,7 +256,7 @@ export default function CallRegistration() {
   }
 
   const fetchCustomerData = debounce(async (query) => {
-    const url = `http://localhost:5000/api/customer/getCustomer?search=${encodeURIComponent(
+    const url = `http://localhost:9000/api/customer/getCustomer?search=${encodeURIComponent(
       query
     )}`
 
@@ -390,7 +389,7 @@ export default function CallRegistration() {
                         {customer?.customerName}
                       </td>
                       <td className="px-4 py-3 text-center text-sm text-gray-700">
-                        {item?.license_no}
+                        {item?.licensenumber}
                       </td>
                       <td className="px-4 py-3 text-center text-sm text-gray-700">
                         {customer?.mobile}
@@ -484,12 +483,12 @@ export default function CallRegistration() {
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         License No
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {/* <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         License expiry
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         License Remaing
-                      </th>
+                      </th> */}
 
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Amc startDate
@@ -501,12 +500,12 @@ export default function CallRegistration() {
                         Amc Remaining
                       </th>
 
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {/* <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Tvu expiry
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Tvu Remaining
-                      </th>
+                      </th> */}
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         No.of Users
                       </th>
@@ -525,12 +524,12 @@ export default function CallRegistration() {
                           <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Product Amount
                           </th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          {/* <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Tvu Amount
                           </th>
                           <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Amc Amount
-                          </th>
+                          </th> */}
                         </>
                       )}
                     </tr>
@@ -542,47 +541,47 @@ export default function CallRegistration() {
                           <input
                             className="form-checkbox h-4 w-4 text-blue-600 hover:bg-blue-200 focus:ring-blue-500 cursor-pointer"
                             checked={
-                              selectedProducts.product_name ===
-                              product.product_name
+                              selectedProducts.productName ===
+                              product.productName
                             }
                             type="checkbox"
                             onChange={(e) => handleCheckboxChange(e, product)}
                           />
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {product?.product_name}
+                          {product?.productName}
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {product?.customer_addDate}
+                          {product?.customerAddDate}
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {product?.license_no}
+                          {product?.licensenumber}
                         </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {product?.license_expiryDate}
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {calculateRemainingDays(product?.license_expiryDate)}
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {product?.amc_startDate}
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {product?.amc_endDate}
-                        </td>
-
                         {/* <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {calculateRemainingDays(product?.amc_endDate)}
+                          {product?.licenseExpiryDate}
+                        </td> */}
+                        {/* <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                          {calculateRemainingDays(product?.licenseExpiryDate)}
                         </td> */}
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {product?.tvu_expiryDate}
+                          {product?.amcstartDate}
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {calculateRemainingDays(product?.tvu_expiryDate)}
+                          {product?.amcendDate}
                         </td>
 
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {product?.no_of_users}
+                          {calculateRemainingDays(product?.amc_endDate)}
+                        </td>
+                        {/* <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                          {product?.tvuexpiryDate}
+                        </td> */}
+                        {/* <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                          {calculateRemainingDays(product?.tvuexpiryDate)}
+                        </td> */}
+
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                          {product?.noofusers}
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                           {product?.version}
@@ -590,21 +589,21 @@ export default function CallRegistration() {
                         {user.role === "Admin" && (
                           <>
                             <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                              {product?.company_name}
+                              {product?.companyName}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                              {product?.branch_name}
+                              {product?.branchName}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                              {product?.product_amount}
+                              {product?.productAmount}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                              {product?.amc_amount}
+                              {product?.amcAmount}
                             </td>
 
-                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                              {product?.tvu_amount}
-                            </td>
+                            {/* <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                              {product?.tvuAmount}
+                            </td> */}
                           </>
                         )}
                       </tr>
