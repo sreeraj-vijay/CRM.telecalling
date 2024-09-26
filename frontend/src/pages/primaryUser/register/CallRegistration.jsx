@@ -47,7 +47,7 @@ export default function CallRegistration() {
   )
   const location = useLocation()
   const { calldetails, token } = location.state || {}
-  
+
   useEffect(() => {
     if (calldetails) {
       console.log("editcalls")
@@ -57,23 +57,20 @@ export default function CallRegistration() {
       // Fetch the call details using the ID
       fetchCallDetails(calldetails)
         .then((callData) => {
-          
           const matchingRegistration =
             callData.callDetails.callregistration.find(
               (registration) => registration.timedata.token === token
             )
-      
 
           // If a matching registration is found, extract the product details
           const productName = matchingRegistration
             ? matchingRegistration.product.productName
             : null
-          
+
           const matchingProducts =
             callData.callDetails.customerid.selected.filter(
               (product) => product.productName === productName
             )
-          
 
           setSelectedCustomer(callData.callDetails.customerid)
           setName(callData.callDetails.customerid.customerName)
@@ -108,8 +105,6 @@ export default function CallRegistration() {
     }
   }, [calldetails, setValue])
 
-  
-
   const fetchCallDetails = async (callId) => {
     console.log("callid", callId)
     // Assuming you have an API to fetch the details
@@ -118,7 +113,7 @@ export default function CallRegistration() {
     )
 
     const data = await response.json()
-    
+
     return data
   }
 
@@ -141,7 +136,6 @@ export default function CallRegistration() {
       setSelectedProducts(null) // Deselect if it was previously selected
     }
   }
-
 
   const calculateRemainingDays = (expiryDate) => {
     if (!expiryDate) return "N/A"
@@ -301,7 +295,7 @@ export default function CallRegistration() {
     console.log("select", customer.selected)
     setCallData([])
     setSelectedCustomer(customer)
-
+    setSearch(customer.customerName)
     setProductDetails(customer.selected)
     setSearching(true)
     if (customer) {
@@ -349,7 +343,7 @@ export default function CallRegistration() {
             <input
               type="text"
               id="customerName"
-              value={name}
+              value={search}
               onChange={(e) => handleInputChange(e.target.value)}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
               placeholder="Enter name or license..."
