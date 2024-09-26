@@ -129,16 +129,16 @@ const CustomerListform = ({ customerlist }) => {
                   customer.selected.map((item) => (
                     <tr key={customer?._id}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
-                        {item.branch_name}
+                        {item.branchName}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                         {customer?.customerName}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
-                        {item?.product_name}
+                        {item?.productName}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
-                        {item?.license_no}
+                        {item?.licensenumber}
                       </td>
 
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-black">

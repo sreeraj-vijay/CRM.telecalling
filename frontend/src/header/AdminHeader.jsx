@@ -1,9 +1,11 @@
-import React, { useState } from "react"
-import { Link, NavLink, useNavigate } from "react-router-dom"
+import React, { useEffect, useState } from "react"
+import { Link, NavLink, useNavigate,} from "react-router-dom"
 import { FaSearch, FaTimes, FaChevronRight } from "react-icons/fa"
+import { VscAccount } from "react-icons/vsc"
 
 export default function AdminHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [user, setUser] = useState(null)
   const [transactionMenuOpen, setTransactionMenuOpen] = useState(false)
   const [masterMenuOpen, setMasterMenuOpen] = useState(false)
   const [reportsMenuOpen, setReportsMenuOpen] = useState(false)
@@ -12,6 +14,15 @@ export default function AdminHeader() {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false)
   const [inventoryMenuOpen, setInventoryMenuOpen] = useState(false)
   const navigate = useNavigate()
+  
+  
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user")
+    if (storedUser) {
+      setUser(JSON.parse(storedUser)) // Parse the user data from string to object
+    }
+  }, [])
+
   const logout = () => {
     // Clear the authentication token from local storage
     localStorage.removeItem("authToken")
@@ -121,7 +132,6 @@ export default function AdminHeader() {
           </svg>
         </button>
       </div>
-
       {/* Mobile menu */}
       <div
         className={`lg:hidden ${
@@ -148,7 +158,6 @@ export default function AdminHeader() {
           ))}
         </div>
       </div>
-
       {/* Logo and links */}
       <div className="flex items-center space-x-2 sm:px-12">
         <svg
@@ -311,6 +320,63 @@ export default function AdminHeader() {
       </nav>
 
       <div className="flex flex-grow justify-center items-center">
+        <div className="relative flex items-center">
+          <VscAccount
+            className="text-2xl"
+            onMouseEnter={() => setProfileMenuOpen(true)}
+            onMouseLeave={() => setProfileMenuOpen(false)}
+          />
+          <span className="text-gray-700 mx-4 rounded-md cursor-pointer">
+            {user.name|| "Profile"}
+          </span>
+          {profileMenuOpen && (
+            <div
+              onMouseEnter={() => setProfileMenuOpen(true)}
+              onMouseLeave={() => setProfileMenuOpen(false)}
+              className="absolute bg-white border rounded top-full mt-0 right-8 w-40 shadow-lg"
+            >
+              <Link
+                to="/admin/crm/crm"
+                onMouseEnter={() => setCrmMenuOpen(true)}
+                onMouseLeave={() => setCrmMenuOpen(false)}
+                className="block px-4 py-2 hover:bg-gray-200 cursor-pointer"
+              >
+                CRM
+              </Link>
+              {crmMenuOpen && (
+                <div
+                  onMouseEnter={() => setCrmMenuOpen(true)}
+                  onMouseLeave={() => setCrmMenuOpen(false)}
+                  className="absolute bg-white border rounded top-full mt-0 left-full w-40 shadow-lg"
+                >
+                  <Link
+                    to="/admin/crm/crm/activity"
+                    className="block px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                  >
+                    Activity
+                  </Link>
+                </div>
+              )}
+              <Link
+                to="/admin/profile"
+                className="block px-4 py-2 hover:bg-gray-200 cursor-pointer"
+              >
+                View Profile
+              </Link>
+              <button
+                onClick={logout}
+                className="block px-4 py-2 text-gray-600 text-sm hover:bg-gray-100 w-full text-left"
+              >
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
+        <span>
+          <FaSearch className="h-3 text-gray-500 ml-12 cursor-pointer" />
+        </span>
+      </div>
+      {/* <div className="flex flex-grow justify-center items-center">
         <div className="relative">
           <span
             className="bg-blue-500 text-white mx-12 rounded-md shadow-md p-2 cursor-pointer"
@@ -365,7 +431,7 @@ export default function AdminHeader() {
         <span>
           <FaSearch className="h-3 text-gray-500 ml-12 cursor-pointer" />
         </span>
-      </div>
+      </div> */}
     </header>
   )
 }

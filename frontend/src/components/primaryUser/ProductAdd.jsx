@@ -40,15 +40,15 @@ const ProductAdd = ({
   })
   const [tableObject, setTableObject] = useState({
     company_id: "",
-    company_name: "",
+    companyName: "",
     branch_id: "",
-    branch_name: "",
+    branchName: "",
     brand_id: "",
-    brand_name: "",
+    brandName: "",
     category_id: "",
-    category_name: "",
+    categoryName: "",
     hsn_id: "",
-    hsn_name: "",
+    hsnName: "",
   })
   // const { data: productData, error: productError } = UseFetch(
   //   "/product/getallProducts"
@@ -69,7 +69,7 @@ const ProductAdd = ({
       const selectedObject =
         productData.selected[productData.selected.length - 1]
       // console.log()
-      console.log(selectedObject.brand_name)
+      console.log(selectedObject.brandName)
       // Assuming productData contains the data you need to pre-fill the form
       setValue("productName", productData.productName || "")
       setValue("productPrice", productData.productPrice || "")
@@ -146,7 +146,7 @@ const ProductAdd = ({
     setTableObject((prev) => ({
       ...prev,
       branch_id: branchId,
-      branch_name: branchName,
+      branchName: branchName,
     }))
     // setSelectedBranch(true)
     setValue("branch", branchId) // Update the value in react-hook-form
@@ -212,7 +212,7 @@ const ProductAdd = ({
     setTableObject((prev) => ({
       ...prev,
       company_id: companyId,
-      company_name: companyName,
+      companyName: companyName,
     }))
 
     setSelectedCompany(companyId)
@@ -227,7 +227,7 @@ const ProductAdd = ({
     setTableObject((prev) => ({
       ...prev,
       brand_id: brandId,
-      brand_name: brandName,
+      brandName: brandName,
     }))
 
     setValue("brand", brandId) // Update the value in react-hook-form
@@ -239,7 +239,7 @@ const ProductAdd = ({
     setTableObject((prev) => ({
       ...prev,
       category_id: categoryId,
-      category_name: categoryName,
+      categoryName: categoryName,
     }))
 
     setValue("category", categoryId) // Update the value in react-hook-form
@@ -251,7 +251,7 @@ const ProductAdd = ({
     setTableObject((prev) => ({
       ...prev,
       hsn_id: hsnId,
-      hsn_name: hsnName,
+      hsnName: hsnName,
     }))
 
     setValue("hsn", hsnId) // Update the value in react-hook-form
@@ -517,10 +517,10 @@ const ProductAdd = ({
                 {tableData?.map((product, index) => (
                   <tr key={index}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {product?.company_name}
+                      {product?.companyName}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {product?.branch_name}
+                      {product?.branchName}
                     </td>
 
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

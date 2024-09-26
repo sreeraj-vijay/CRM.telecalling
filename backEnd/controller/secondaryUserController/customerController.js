@@ -119,7 +119,8 @@ export const customerCallRegistration = async (req, res) => {
   try {
     const { customerid, customer } = req.query // Get customerid from query
     const calldata = req.body // Assuming calldata is sent in the body
-    console.log("calldata", calldata)
+    console.log("calldatasssss", calldata)
+    console.log("customeridddd", customerid)
 
     // Convert customerid to ObjectId
     const customerId = new mongoose.Types.ObjectId(customerid)
@@ -186,7 +187,7 @@ export const customerCallRegistration = async (req, res) => {
       })
     }
   } catch (error) {
-    console.error("Error saving or updating call registration:", error)
+    console.error("Error saving or updating call registration:", error.message)
     return res.status(500).json({
       status: false,
       message: "Error saving or updating call registration"
@@ -246,6 +247,7 @@ export const GetallCalls = async (req, res) => {
         select: "productName" // Optionally select fields from the Product schema you need
       })
       .exec()
+    console.log("allcalls", allcalls)
 
     if (allcalls.length > 0) {
       res.status(200).json({ message: "calls found", data: allcalls })

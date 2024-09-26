@@ -31,10 +31,10 @@ const Login = () => {
         localStorage.setItem("authToken", token)
 
         localStorage.setItem("user", JSON.stringify(user))
-
+        
         setTimeout(() => {
           if (role === "Admin") {
-            navigate("/admin/home")
+            navigate("/admin/home",)
           } else if (role === "Staff") {
             navigate("/staff/home")
           }

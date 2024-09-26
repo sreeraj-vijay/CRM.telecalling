@@ -113,8 +113,10 @@ export const Login = async (req, res) => {
     let user
     if (role === "Admin") {
       user = await Admin.findOne({ email })
+      console.log("use", user)
     } else if (role === "Staff") {
       user = await Staff.findOne({ email })
+      console.log("uddfff", user)
     }
 
     if (!user) {
@@ -122,17 +124,19 @@ export const Login = async (req, res) => {
     }
 
     const isMatch = await bcrypt.compare(password, user.password)
+    console.log("isma", isMatch)
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid login credentials" })
     }
-
+    console.log("id", user.id)
     const token = generateToken(res, user.id)
+    console.log("tok", token)
 
     res
       .status(200)
       .json({ message: "Login successful", token, role: user.role, user })
   } catch (error) {
-    console.error("Login error:", error)
+    console.error("Login error:", error.message)
     res.status(500).json({ message: "Server error" })
   }
 }

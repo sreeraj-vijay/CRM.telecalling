@@ -2,6 +2,8 @@ import fs from "fs"
 import XLSX from "xlsx"
 import Excel from "../../model/primaryUser/excelSchema.js"
 import Customer from "../../model/secondaryUser/customerSchema.js"
+import Product from "../../model/primaryUser/productSchema.js"
+import Company from "../../model/primaryUser/companySchema.js"
 
 const convertExcelToJson = (filePath) => {
   // Read the file from the file path
@@ -61,34 +63,44 @@ export const ExceltoJson = async (req, res) => {
     // Convert the uploaded Excel file to JSON
     const jsonData = convertExcelToJson(filePath)
     console.log("JSON Datass:", jsonData) // Log the parsed JSON data
-
+    const product = await Product.find()
+    const company = await Company.find()
+    console.log("pro", product)
+    console.log("com", company)
     for (const item of jsonData) {
+      const matchingProduct = product.find(
+        (product) => product.productName === item["Type"]
+      )
+      const matchingCompany = company.find(
+        (company) => company.name === "CAMET GROUP"
+      )
       const selectedData = [
         {
-          company_id: "",
-          company_name: "",
+          company_id: matchingCompany ? matchingCompany._id : "",
+          companyName: matchingCompany ? matchingCompany.name : "",
           branch_id: "",
-          branch_name: "",
-          product_id: "",
-          product_name: item["Type"],
-          brand_name: item["S/W Type"],
-          category_name: item["User"],
-          license_no: item["CUSTOMER ID"],
-          no_of_users: item["NoOfUser"],
-          company_using: item["CompanyUsing"],
+          branchName: "",
+          product_id: matchingProduct ? matchingProduct._id : "",
+          productName: item["Type"],
+          brandName: item["S/W Type"],
+          categoryName: item["User"],
+          licensenumber: item["CUSTOMER ID"],
+          softwareTrade: item["Software Trade"],
+          noofusers: item["NoOfUser"],
+          companyusing: item["CompanyUsing"],
 
           version: item["Version"],
-          customer_addDate: item["Act On"],
-          amc_startDate: item["Software HitDate"],
-          amc_endDate: item["Due On"],
-          amc_amount: "",
-          amc_description: "",
-          license_expiryDate: "",
-          product_amount: item["Total Amount"],
-          product_description: "",
-          tvu_expiryDate: "",
-          tvu_amount: "",
-          tvu_description: "",
+          customerAddDate: item["Act On"],
+          amcstartDate: item["Software HitDate"],
+          amcendDate: item["Due On"],
+          amcAmount: "",
+          amcDescription: "",
+          licenseExpiryDate: "",
+          productAmount: item["Total Amount"],
+          productamountDescription: "",
+          tvuexpiryDate: "",
+          tvuAmount: "",
+          tvuamountDescription: "",
           isActive: item["Party Status"]
         }
       ]
@@ -96,8 +108,8 @@ export const ExceltoJson = async (req, res) => {
       // Conditionally add the Wallet Id only if it exists
       if (item["Wallet Id"]) {
         selectedData.push({
-          product_name: "Wallet Id",
-          license_no: item["Wallet Id"]
+          productName: "Wallet Id",
+          licensenumber: item["Wallet Id"]
         })
       }
 
