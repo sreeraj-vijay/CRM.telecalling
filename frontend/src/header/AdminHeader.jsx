@@ -191,7 +191,8 @@ export default function AdminHeader() {
           </text>
         </svg>
         <span className="text-3xl font-bold text-green-600">CAMET</span>
-      </div>
+      </div >
+      <div className="flex flex-grow justify-center items-center">
       <nav className="hidden md:flex items-center gap-3 space-x-4">
         {links.map((link) => (
           <div
@@ -317,6 +318,8 @@ export default function AdminHeader() {
           </div>
         ))}
       </nav>
+      </div>
+      
 
       <div className="flex flex-grow justify-center items-center">
         <div className="relative flex items-center">
