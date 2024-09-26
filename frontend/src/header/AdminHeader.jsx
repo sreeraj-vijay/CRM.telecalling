@@ -374,9 +374,9 @@ export default function AdminHeader() {
             </div>
           )}
         </div>
-        <span>
+        {/* <span>
           <FaSearch className="h-3 text-gray-500 ml-12 cursor-pointer" />
-        </span>
+        </span> */}
       </div>
     </header>
   )
