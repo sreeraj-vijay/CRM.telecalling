@@ -11,7 +11,7 @@ const LicenseSchema = new mongoose.Schema({
     ref: "Customer",
     required: true
   },
-  license_no: { type: String, required: true }
+  licensenumber: { type: String, required: true }
 })
 
 export default mongoose.model("License", LicenseSchema)

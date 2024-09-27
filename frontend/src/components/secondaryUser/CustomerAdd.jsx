@@ -71,6 +71,7 @@ const CustomerAdd = ({
   useEffect(() => {
     if (productData) setProducts(productData) // Directly set products to productData
   }, [productData])
+
   const productOptions = useMemo(() => {
     return products?.map((product) => ({
       value: product._id,
@@ -83,26 +84,38 @@ const CustomerAdd = ({
       setLicense(licensenumber)
     }
   })
-  console.log("tableo", tableObject)
-  console.log("selected", selected)
-  console.log("customer", customer)
 
-  const debouncedLicenseNo = useDebounce(tableObject.license_no, 500)
+  const debouncedLicenseNo = useDebounce(tableObject.licensenumber, 500)
+  console.log("debounce", debouncedLicenseNo)
   useEffect(() => {
     // Assuming you want to set the values for the first selected product
     // const selectedProduct = customer.selected[0];
     const keyvalue = []
     const value = []
+    // if (selected) {
+    //   Object.keys(selected).forEach((key) => {
+    //     console.log("sel", selected["amcstartDate"])
+    //     console.log("type", typeof selected.amcstartDate)
+    //     setValue("amcstartDate", new Date(selected["amcstartDate"]))
+    //     // if (key === "amcstartDate") {
+    //     //   keyvalue.push(key)
+    //     //   value.push(selected[key])
+    //     // }
+    //   })
+    // }
     if (selected) {
       Object.keys(selected).forEach((key) => {
-        console.log("sel", selected["amcstartDate"])
-        console.log("type", typeof selected.amcstartDate)
-        setValue("amcstartDate", new Date(selected["amcstartDate"]))
-        // if (key === "amcstartDate") {
-        //   keyvalue.push(key)
-        //   value.push(selected[key])
+        if (key === "productName") {
+          // Find the product object in the options list
+          const selectedProduct = productOptions.find(
+            (option) => option.label === customer[key]
+          );
+          setValue("productName", selectedProduct); // Set the react-select value as an object
+        } 
+        // else {
+        //   setValue(key, customer[key]); // Set other values directly
         // }
-      })
+      });
     }
     if (customer) {
       Object.keys(customer).forEach((key) => {
@@ -110,15 +123,15 @@ const CustomerAdd = ({
         setValue(key, customer[key])
       })
     }
-    console.log("key", keyvalue)
-    console.log("value", value)
   }, [customer, selected, setValue])
+
   useEffect(() => {
     // If there's a debounced license number, check its uniqueness
+    console.log("lice", license)
     if (debouncedLicenseNo) {
       if (license.length > 0 && isLicense.length === 0) {
         const checkLicense = license.find(
-          (item) => item.license_no === debouncedLicenseNo
+          (item) => item.licensenumber === debouncedLicenseNo
         )
         if (checkLicense) {
           setLicenseAvailable(false)
@@ -127,6 +140,7 @@ const CustomerAdd = ({
           toast.error("license number already exits")
         } else {
           setLicenseAvailable(true)
+          setlicenseExist((prevState) => [...prevState, debouncedLicenseNo])
           console.log("checked false at licesnes")
           toast.success("license number is available")
         }
@@ -137,7 +151,7 @@ const CustomerAdd = ({
             (item) => item === debouncedLicenseNo
           )
           const licensecheck = license.find(
-            (item) => item.license_no === debouncedLicenseNo
+            (item) => item.licensenumber === debouncedLicenseNo
           )
           if (checklicense || licensecheck) {
             setLicenseAvailable(false)
@@ -173,10 +187,20 @@ const CustomerAdd = ({
   const amcAmountSelected = watch("amcAmount")
 
   const handleTableData = () => {
-    if (!licenseAvailable) {
-      toast.error("license number is already exists")
-      return
+    const checklicense = isLicense.find((item) => item === debouncedLicenseNo)
+    const licensecheck = license.find(
+      (item) => item.licensenumber === debouncedLicenseNo
+    )
+    if (checklicense || licensecheck) {
+      setLicenseAvailable(false)
+      console.log("checked false at islicense")
+
+      toast.error("license number is already exist")
     }
+    // if (!licenseAvailable) {
+    //   toast.error("license number is already exists")
+    //   return
+    // }
     if (tableObject.company_id.trim() === "") {
       toast.error("please select a company")
       return
@@ -241,9 +265,12 @@ const CustomerAdd = ({
       seteditState(false) // Reset the edit index
     } else {
       // Otherwise, add a new item
-      const isIncluded = tableData.some(
-        (item) => JSON.stringify(item) === JSON.stringify(tableObject)
-      )
+      console.log("tabledta", tableData)
+      console
+      const isIncluded =
+        tableData.some(
+          (item) => JSON.stringify(item) === JSON.stringify(tableObject)
+        ) && isLicense.includes(tableObject.licensenumber)
 
       if (isIncluded) {
         toast.error("already added")
@@ -447,7 +474,6 @@ const CustomerAdd = ({
       } else if (process === "Edit") {
         await handleEditedData(formData)
       }
-      toast.success("Customer saved successfully!")
     } catch (error) {
       toast.error("Failed to save customer!")
     }
@@ -569,7 +595,7 @@ const CustomerAdd = ({
                 Pincode
               </label>
               <input
-                type="text"
+                type="number"
                 {...register("pincode")}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
                 placeholder="Pincode"
@@ -1151,8 +1177,8 @@ const CustomerAdd = ({
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 sm:text-sm focus:border-gray-500 outline-none"
                 >
                   <option value="">Select Status</option>
-                  <option value="true">Active</option>
-                  <option value="false">Inactive</option>
+                  <option value="Running">Active</option>
+                  <option value="Not Running">Inactive</option>
                 </select>
                 {errors.isActive && (
                   <p className="text-red-500">

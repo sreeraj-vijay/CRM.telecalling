@@ -6,7 +6,7 @@ import {
   FaSearch,
   FaRegFileExcel,
   FaFilePdf,
-  FaPrint,
+  FaPrint
 } from "react-icons/fa"
 import { Link } from "react-router-dom"
 import _ from "lodash"
@@ -93,9 +93,9 @@ const ProductListform = ({ productlist }) => {
                 <th className="py-2 px-4 border-b border-gray-300 text-left">
                   Hsn
                 </th>
-                <th className="py-2 px-4 border-b border-gray-300 text-left">
+                {/* <th className="py-2 px-4 border-b border-gray-300 text-left">
                   Status
-                </th>
+                </th> */}
                 <th className="py-2 px-4 border-b border-gray-300 text-left">
                   Edit
                 </th>
@@ -175,25 +175,25 @@ const ProductListform = ({ productlist }) => {
                   product.selected.map((item) => (
                     <tr key={`${product._id}-${item.branch_id}`}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
-                        {item.company_name}
+                        {item.companyName}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
-                        {item.branch_name}
+                        {item.branchName}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                         {product.productName}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                         {/* You can replace these with actual brand, category, and HSN data */}
-                        {item.brand_name}
+                        {item.brandName}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
-                        {item.category_name}
+                        {item.categoryName}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
-                        {item.hsn_name}
+                        {item.hsnName}
                       </td>
-                      <td
+                      {/* <td
                         className={`px-6 py-4 whitespace-nowrap text-sm ${
                           item.status === "Active"
                             ? "text-blue-700"
@@ -201,15 +201,15 @@ const ProductListform = ({ productlist }) => {
                         }`}
                       >
                         {item.status || "N/A"}
-                      </td>
+                      </td> */}
                       <td className="px-6 py-4 whitespace-nowrap text-xl text-black">
                         {/* Add actions like Edit/Delete here */}
                         <CiEdit
                           onClick={() =>
                             navigate("/admin/masters/productEdit", {
                               state: {
-                                productData: product,
-                              }, // pass the correct data here
+                                productData: product
+                              } // pass the correct data here
                             })
                           }
                         />
