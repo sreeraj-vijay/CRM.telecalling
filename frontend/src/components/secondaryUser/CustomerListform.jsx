@@ -18,7 +18,8 @@ const CustomerListform = ({ customerlist }) => {
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState("")
   const [filteredCustomer, setFilteredCustomer] = useState(customerlist)
-
+  console.log("cust", customerlist)
+  
   const handleSearch = useCallback(
     _.debounce((query) => {
       const lowerCaseQuery = query.toLowerCase()

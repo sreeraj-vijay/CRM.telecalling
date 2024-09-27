@@ -5,6 +5,9 @@ import mongoose from "mongoose"
 
 export const CustomerRegister = async (req, res) => {
   const { customerData, tabledata = {} } = req.body
+  console.log("table", tabledata)
+  console.log("pin", customerData.pincode)
+  console.log("pinty", typeof customerData.pincode)
 
   const {
     customerName,
@@ -22,7 +25,6 @@ export const CustomerRegister = async (req, res) => {
 
   // Check if user already exists
   const customerExists = await Customer.findOne({ customerName })
-  console.log("ecit", customerExists)
 
   if (customerExists) {
     return res.status(400).json({ message: "Customer already registered" })
@@ -43,25 +45,24 @@ export const CustomerRegister = async (req, res) => {
       isActive,
       selected: tabledata
     })
-    console.log("customerrrrrrr", customer)
+
     const customerData = await customer.save()
-    console.log("customerdataaaaaaaaaaa", customerData)
 
     if (tabledata) {
       for (const item of customerData.selected) {
         const license = new License({
           products: item.product_id,
           customerName: customerData._id, // Using the customer ID from the parent object
-          license_no: item.license_no
+          licensenumber: item.licensenumber
         })
 
         await license.save()
       }
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       status: true,
-      message: "Customer created successfully"
+      message: "Customer created successfullyddddddddd"
     })
   } catch (error) {
     console.log(error.message)
